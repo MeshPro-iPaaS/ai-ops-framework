@@ -35,7 +35,7 @@ and a department is where owners come from.
 and you do not type any of this. Make a folder, connect it, and ask in plain words:
 
 > *Set up the AI Operations Framework in this folder — pull it from
-> github.com/meshpro/ai-ops-framework and run the install.*
+> github.com/MeshPro-iPaaS/ai-ops-framework and run the install.*
 
 Claude does the rest. [`docs/START HERE.md`](docs/START%20HERE.md) is the walkthrough, written for
 somebody who has never opened a terminal.

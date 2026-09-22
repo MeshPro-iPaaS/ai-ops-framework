@@ -45,7 +45,7 @@ Then **connect the folder** you just made to that project. Claude will ask you t
 Write this to Claude, in the project, in exactly these words or your own:
 
 > **Set up the AI Operations Framework in my connected folder. Pull it from
-> github.com/meshpro/ai-ops-framework and run the install, then tell me what it made.**
+> github.com/MeshPro-iPaaS/ai-ops-framework and run the install, then tell me what it made.**
 
 Claude fetches the framework, installs it into your folder and runs the check. It takes about a minute.
 When it finishes you have thirteen folders, a contract, templates, one department, three roles compiled
