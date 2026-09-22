@@ -15,20 +15,29 @@ place the rules live, and every AI session in this vault reads it before doing a
 
 ## Departments, and the executive layer
 
-The organisation is a set of **departments**. Each one has exactly **one executive** — a role note that
-is compiled into an agent that answers for it. That is the whole structure, and it is deliberately the
-first thing you build, because every other thing here needs an owner and a department is where owners
-come from.
+A **department** is one area somebody answers for. In a company that is Sales or Delivery; for one
+person it is **each hat you wear at work** — the client accounts, the reporting, the LinkedIn posting,
+the recruiting you somehow ended up doing. Same mechanism either way, and the personal version is the
+more common one.
+
+Each department has exactly **one executive** — a role note compiled into an agent that answers for it.
+That is the whole structure, and it is deliberately the first thing you build, because every other
+thing here needs an owner and a department is where owners come from.
 
 | | |
 |---|---|
-| **A department** | `01 - Company/Departments/{Name}.md` — what it owns, what it does not, and one sentence saying how you would know it is working |
+| **A department** | `01 - Company/Departments/{Name}.md` — what it owns, **where it stops**, and one sentence saying how you would know it is working |
 | **Its executive** | `01 - Company/Roles/{Name}.md` with `department: {Name}` — recommends, never decides |
 | **Above them** | The Chief of Staff, company-wide: routes work, keeps the picture true |
 | **Across them** | The Workflow Architect: owns how a workflow is written down, not what any department does |
 
 Three to six departments. If two of them would never disagree about anything, they are one. The same
 person may answer for several — the department is the unit of **accountability**, not of headcount.
+
+**Every department states where it stops**, and that line matters more than the list of what it owns.
+An agent always answers: ask one something just outside its ground and it will produce a confident,
+plausible answer about a subject it knows nothing about, and you will not be able to tell from the
+answer. The stop line is what makes the rest of its answers worth having.
 
 Every workflow names its department, or the word `company` when it genuinely belongs to no single one.
 A blank field cannot be told apart from a forgotten one, so the check refuses it.

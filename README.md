@@ -11,7 +11,7 @@ workflows, four generators, one check suite, one page. No task board, no custome
 no code agents — those are separate packages you add when the base is running and you want more. A setup
 that does everything on day one is a setup nobody finishes reading.
 
-**You start with departments.** Name the parts of your organisation, give each one an executive, and the
+**You start with departments.** Name the parts — for a company its divisions, for one person every hat you wear at work — give each one an executive, and the
 agents follow from that. Everything else — workflows, decisions, the weekly rhythm — hangs off an owner,
 and a department is where owners come from.
 
@@ -35,7 +35,7 @@ and a department is where owners come from.
 and you do not type any of this. Make a folder, connect it, and ask in plain words:
 
 > *Set up the AI Operations Framework in this folder — pull it from
-> github.com/…/ai-ops-framework and run the install.*
+> github.com/meshpro/ai-ops-framework and run the install.*
 
 Claude does the rest. [`docs/START HERE.md`](docs/START%20HERE.md) is the walkthrough, written for
 somebody who has never opened a terminal.
@@ -62,7 +62,10 @@ is plain Markdown either way, and nothing depends on a plugin.
 
 ## Showing it to someone
 
-`docs/` holds a fourteen-slide deck — the four ideas, what lands on disk, and a day-by-day first
+`docs/` holds two decks — a fourteen-slide one for somebody deciding whether to adopt it, and an
+eighteen-slide **hands-on** one for a room building it with you, live, in an hour.
+
+The fourteen-slide deck — the four ideas, what lands on disk, and a day-by-day first
 fortnight with screenshots of the page the framework generates for itself. Present it as-is, or
 run the install against an empty folder and show the real thing.
 

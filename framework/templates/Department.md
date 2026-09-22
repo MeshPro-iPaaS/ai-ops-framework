@@ -11,7 +11,7 @@ owns:
   - The first thing this department is accountable for
   - The second
 not_owned:
-  - Something people will assume belongs here and does not — name it, or you will argue about it later
+  - Where this one stops — the nearby thing people (and its agent) will assume is its and is not
 succeeds_when: "One sentence a person outside the department could check."
 ---
 
@@ -23,6 +23,14 @@ succeeds_when: "One sentence a person outside the department could check."
 ## What it owns
 
 The list above, in prose. Where a boundary is genuinely unclear, say so here rather than pretending.
+
+## Where it stops
+
+The `not_owned:` list, and it is the more important of the two. **An agent always answers.** Ask one a
+question just outside its ground and it will not say "that is not mine" — it will produce something
+confident and plausible about a subject it knows nothing about, and you will not be able to tell.
+The stop line is what makes the answers you *do* get trustworthy. Between people it does a second job:
+the argument about who owns a thing is much cheaper now than in six months.
 
 ## Who leads it
 
