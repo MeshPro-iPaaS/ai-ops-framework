@@ -43,6 +43,12 @@ after any change and it brings everything back in line.
 3. **A check refuses the build when a stated number would be untrue.** Not a warning — a failure.
 4. **Only a person publishes, sends, deploys or decides.** The machine prepares; the human commits.
 
+## Showing it to someone
+
+`docs/` holds a fourteen-slide deck — the four ideas, what lands on disk, and a day-by-day first
+fortnight with screenshots of the page the framework generates for itself. Present it as-is, or
+run the install against an empty folder and show the real thing.
+
 ## Adding more
 
 | Package | What it adds |

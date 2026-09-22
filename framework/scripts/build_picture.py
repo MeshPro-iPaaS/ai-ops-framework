@@ -65,6 +65,14 @@ footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-si
 """
 
 
+def clip(s, n):
+    """Cut on a word boundary — a purpose that ends mid-word reads as a bug, and this page is the product."""
+    s = (s or "").strip()
+    if len(s) <= n:
+        return s or "—"
+    return s[:n].rsplit(" ", 1)[0].rstrip(" ,.;:—-") + "…"
+
+
 def days(d):
     try:
         return (TODAY - datetime.date.fromisoformat(str(d)[:10])).days
@@ -127,7 +135,7 @@ def build(root):
     flow_rows = "".join(
         '<tr><td><b>{}</b><br><span style="color:var(--muted);font-size:13px">{}</span></td>'
         '<td>{}</td><td>{}</td><td>{}</td></tr>'.format(
-            E(w["_name"]), E(F.summary(w["_body"], "Purpose")[:120] or "—"), E(w.get("owner") or "—"),
+            E(w["_name"]), E(clip(F.summary(w["_body"], "Purpose"), 120)), E(w.get("owner") or "—"),
             '<span class="pill good">validated</span>' if w.get("doc_status") == "validated"
             else '<span class="pill">note is a draft</span>',
             {"ready": '<span class="pill good">running</span>',
