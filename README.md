@@ -63,7 +63,7 @@ is plain Markdown either way, and nothing depends on a plugin.
 ## Showing it to someone
 
 `docs/` holds two decks — a fourteen-slide one for somebody deciding whether to adopt it, and an
-eighteen-slide **hands-on** one for a room building it with you, live, in an hour.
+seventeen-slide **hands-on** one for a room building it with you, live, in an hour.
 
 The fourteen-slide deck — the four ideas, what lands on disk, and a day-by-day first
 fortnight with screenshots of the page the framework generates for itself. Present it as-is, or

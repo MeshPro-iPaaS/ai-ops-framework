@@ -14,7 +14,7 @@ something untrue.
 | | |
 |---|---|
 | **Claude, on your computer** | The desktop app. This is where you do everything |
-| **A folder** | Anywhere you like — `Documents\My Company` is fine. Empty is fine. This becomes your vault |
+| **A folder** | Under `C:\AI` — `C:\AI\My Second Brain` is fine. Empty is fine. This becomes your vault |
 | **Obsidian** *(recommended, not required)* | Free. It is how you read and edit the vault comfortably. Everything works without it; it is just nicer with it |
 
 Your vault is **your second brain**: the place your organisation's facts live, so that you and Claude
@@ -25,7 +25,8 @@ computer and it is plain text you can read with Notepad.
 
 ## 1 · Make the folder
 
-Make an empty folder somewhere you will find it again. Give it your company's name.
+Make an empty folder under `C:\AI` and give it your own name, or your team's. Everything AI-related
+lives in one place that way, which matters the first time you go looking for it.
 
 That is the whole of step one.
 
