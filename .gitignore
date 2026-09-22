@@ -1,0 +1,6 @@
+# Nothing generated, nothing local.
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+demo-vault/
