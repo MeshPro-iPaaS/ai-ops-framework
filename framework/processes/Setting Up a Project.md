@@ -1,7 +1,8 @@
 ---
 type: workflow
 status: active
-owner: Domain Lead
+department: Operations
+owner: Operations Executive
 created: 2026-09-22
 updated: 2026-09-22
 doc_status: draft
@@ -18,7 +19,7 @@ here so you have something to adapt rather than a blank page.
 **Trigger.** Someone says "we should", twice.
 **Done means.** A project note exists with an outcome, an owner, what is out of scope, and how you will
 know it is done.
-**Owner.** Domain Lead.
+**Owner.** Operations Executive.
 
 ## How it runs today
 
@@ -46,11 +47,11 @@ flowchart TB
 
 | # | Step | Who | What they need | What comes out |
 |---|---|---|---|---|
-| 1 | State the outcome, not the activity | Domain Lead | The ask | "X can do Y" rather than "build Y" |
-| 2 | Name what is out of scope | Domain Lead | Judgement | A boundary that stops scope creep |
+| 1 | State the outcome, not the activity | Operations Executive | The ask | "X can do Y" rather than "build Y" |
+| 2 | Name what is out of scope | Operations Executive | Judgement | A boundary that stops scope creep |
 | 3 | Decide whether it is worth doing now | You | Steps 1–2 | Yes, or written down and not started |
-| 4 | Write the project note | Domain Lead | The template | A note with an owner |
-| 5 | Break it into startable pieces | Domain Lead | The note | Work somebody could begin Monday |
+| 4 | Write the project note | Operations Executive | The template | A note with an owner |
+| 5 | Break it into startable pieces | Operations Executive | The note | Work somebody could begin Monday |
 | 6 | Put the pieces on the board | — | **The Board package** | Not in the base |
 
 ## Where it breaks

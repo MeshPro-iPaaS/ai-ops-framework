@@ -4,7 +4,7 @@ install.py — AI Operations Framework (MeshPro x Expectus), base package.
 
     python install.py "C:\\path\\to\\your\\vault"
 
-Creates the folders, installs the contract, templates, roles, workflows and skills, compiles the roles
+Creates the folders, installs the contract, templates, departments, roles, workflows and skills, compiles the roles
 into runnable agents, builds the register and the page, and runs the check. Idempotent: run it again
 after any change and everything downstream comes back into line.
 
@@ -26,6 +26,7 @@ FOLDERS = {
     "00 - Inbox": "Anything not yet filed. This folder is emptied, not stored.",
     "01 - Company": "How the organisation works: decisions, roles, workflows, the weekly record.",
     "01 - Company/Decisions": "One note per decision. An agent may draft everything except the decision.",
+    "01 - Company/Departments": "One note per department. Each names one executive who answers for it.",
     "01 - Company/Roles": "One note per role. Edit these, never the compiled agents in .claude/agents.",
     "01 - Company/Workflows": "One note per workflow, named by what it does. Workflows.md is generated.",
     "01 - Company/Weekly": "One note per week: what finished, what is stale, what is next.",
@@ -80,13 +81,16 @@ def main(vault):
         shutil.copy2(os.path.join(FW, "templates", f), os.path.join(vault, "_Templates", f))
     say(3, f"{len(os.listdir(os.path.join(FW,'templates')))} templates refreshed")
 
-    # 4. roles and workflows (copied once, then yours)
+    # 4. departments, roles and workflows (copied once, then yours)
+    d = sum(copy_once(os.path.join(FW, "departments", f),
+                      os.path.join(vault, "01 - Company", "Departments", f))
+            for f in sorted(os.listdir(os.path.join(FW, "departments"))))
     r = sum(copy_once(os.path.join(FW, "roles", f), os.path.join(vault, "01 - Company", "Roles", f))
             for f in sorted(os.listdir(os.path.join(FW, "roles"))))
     w = sum(copy_once(os.path.join(FW, "processes", f), os.path.join(vault, "01 - Company", "Workflows", f))
             for f in sorted(os.listdir(os.path.join(FW, "processes"))))
-    say(4, f"{r} roles and {w} workflows installed" if (r or w) else
-        "roles and workflows left alone — yours to edit")
+    say(4, f"{d} department, {r} roles and {w} workflows installed" if (d or r or w) else
+        "departments, roles and workflows left alone — yours to edit")
 
     # 5. skills and scripts (always refreshed)
     sk = os.path.join(vault, ".claude", "skills")
@@ -121,7 +125,10 @@ def main(vault):
     print()
     if out.returncode == 0:
         print("Open 05 - Operations/picture/index.html in a browser — that is your picture.")
-        print("Then open the vault folder in Obsidian, and in Claude Code from the same folder.")
+        print("Then open the vault folder in Obsidian, and connect it in Claude.")
+        print()
+        print("First thing to do: name your departments. Ask Claude to walk you through")
+        print("'Setting Up a Department' — it is the workflow the rest of the layer hangs off.")
     else:
         print("The check found something untrue. Fix the note it names, then run this again.")
     print(f"\nAI Operations Framework, base package — MeshPro x Expectus\n")

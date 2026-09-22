@@ -22,7 +22,9 @@ def build(root):
         slug = r.get("slug") or r["_name"].lower().replace(" ", "-")
         owns = r.get("owns") or []
         never = r.get("never") or []
+        dept = r.get("department")
         desc = (f"{r.get('name', r['_name'])} — {r.get('authority','prepare')} authority. "
+                + (f"Leads the {dept} department. " if dept else "Company-wide, not tied to one department. ")
                 + ("Owns: " + "; ".join(owns[:3]) + ". " if owns else "")
                 + ("Never: " + "; ".join(never) + ". " if never else "")
                 + f"Reports to {r.get('reports_to','you')}.")
@@ -31,7 +33,9 @@ def build(root):
         zones = ", ".join(f"`{z}`" for z in (r.get("writes") or [])) or "nothing yet"
         text = (f"---\nname: {slug}\ndescription: \"{desc}\"\n---\n{BANNER}\n\n"
                 f"{r['_body'].strip()}\n\n## Your authority\n\n"
-                f"Default level: **{r.get('authority','prepare')}**. "
+                + (f"You answer for the **{dept}** department; see `01 - Company/Departments/{dept}.md`. "
+                   f"Another department's question is not yours — hand it back.\n\n" if dept else "")
+                + f"Default level: **{r.get('authority','prepare')}**. "
                 f"You may write in: {zones}.\n\n"
                 f"### You may do these without asking\n\n{green}\n\n"
                 f"### You may never\n\n{no}\n\n"

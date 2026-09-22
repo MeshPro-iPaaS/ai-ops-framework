@@ -4,6 +4,7 @@ import io, os, re, glob
 
 FOLDERS = ["00 - Inbox", "01 - Company", "02 - Work", "03 - People",
            "04 - Knowledge", "05 - Operations", "06 - Daily", "_Templates"]
+DEPTS_DIR = os.path.join("01 - Company", "Departments")
 ROLES_DIR = os.path.join("01 - Company", "Roles")
 FLOWS_DIR = os.path.join("01 - Company", "Workflows")
 DECISIONS_DIR = os.path.join("01 - Company", "Decisions")
@@ -14,6 +15,10 @@ AGENTS_DIR = os.path.join(".claude", "agents")
 READINESS = {"not-yet", "partly", "ready"}
 DOC_STATUS = {"draft", "validated"}
 AUTHORITY = {"observe", "recommend", "prepare", "execute"}
+
+# A workflow that belongs to no single department says so in this word rather than leaving the
+# field blank, because blank cannot be told apart from forgotten.
+COMPANY_WIDE = "company"
 
 
 def read(p):

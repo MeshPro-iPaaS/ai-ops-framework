@@ -6,10 +6,14 @@ A written organisation that keeps itself true. You give it a folder; it gives yo
 workflows that execute the same way twice, and a picture of your operation that regenerates itself and
 **refuses to publish a number it cannot prove**.
 
-This is the **base**. It is deliberately small: three roles, six workflows, four generators, one check
-suite, one page. No task board, no customer record, no schedules, no code agents — those are separate
-packages you add when the base is running and you want more. A setup that does everything on day one is a
-setup nobody finishes reading.
+This is the **base**. It is deliberately small: one department with an executive, three roles, eight
+workflows, four generators, one check suite, one page. No task board, no customer record, no schedules,
+no code agents — those are separate packages you add when the base is running and you want more. A setup
+that does everything on day one is a setup nobody finishes reading.
+
+**You start with departments.** Name the parts of your organisation, give each one an executive, and the
+agents follow from that. Everything else — workflows, decisions, the weekly rhythm — hangs off an owner,
+and a department is where owners come from.
 
 ## What you get
 
@@ -17,24 +21,37 @@ setup nobody finishes reading.
 |---|---|
 | **A contract** | The operating rules every AI session inherits before it does anything |
 | **A folder skeleton** | Eight folders, each with one job, and a rule for what belongs in it |
-| **Five templates** | So state is written the same way every time and a machine can read it |
-| **Three roles** | Chief of Staff, Domain Lead, Workflow Architect — written contracts compiled into runnable agents |
-| **Six workflows** | Five that keep the vault true, one generic project workflow as a worked example |
+| **Six templates** | So state is written the same way every time and a machine can read it |
+| **A department layer** | One department installed as a worked example, and the workflow for naming your own |
+| **Three roles** | Chief of Staff · Operations Executive (the shape every department's executive takes) · Workflow Architect — written contracts compiled into runnable agents |
+| **Eight workflows** | Five that keep the vault true, one for naming your departments, two generic examples |
 | **Two skills** | Writing a workflow down, and keeping the picture true |
 | **Four generators** | Roles → agents · workflows → a register · the vault → a page · the whole thing → a check |
-| **One check suite** | Ten checks that fail the build when the picture and reality disagree |
+| **One check suite** | Thirteen checks that fail the build when the picture and reality disagree |
 
 ## Install
 
-Requires Python 3.10+ and, optionally, Obsidian to read the vault comfortably.
+**If you use Claude with a folder connected** — the way most people will — you do not install anything
+and you do not type any of this. Make a folder, connect it, and ask in plain words:
+
+> *Set up the AI Operations Framework in this folder — pull it from
+> github.com/…/ai-ops-framework and run the install.*
+
+Claude does the rest. [`docs/START HERE.md`](docs/START%20HERE.md) is the walkthrough, written for
+somebody who has never opened a terminal.
+
+**If you would rather run it yourself**, it needs Python 3.10+ and nothing else:
 
 ```
 python install.py "C:\path\to\your\vault"
 ```
 
-That creates the folders, copies the contract, templates, roles, workflows and skills in, compiles the
-roles into agents, builds the register and the page, and runs the check. It is idempotent — run it again
-after any change and it brings everything back in line.
+Either way it creates the folders, copies the contract, templates, departments, roles, workflows and
+skills in, compiles the roles into agents, builds the register and the page, and runs the check. It is
+idempotent — run it again after any change and it brings everything back in line.
+
+Obsidian is optional but recommended: it is how you read and edit the vault comfortably. The framework
+is plain Markdown either way, and nothing depends on a plugin.
 
 ## The idea underneath
 
@@ -54,6 +71,7 @@ run the install against an empty folder and show the real thing.
 | Package | What it adds |
 |---|---|
 | The Rhythm | Daily, weekly and monthly passes · ledgers · the surface that names what waits on a person |
+| More Departments | Ready-made department and executive notes — sales, delivery, finance, engineering, marketing — to adapt rather than write |
 | The Board | Your task tracker connected, and the discipline that keeps it truthful |
 | The Customer Record | Account schema, health, who needs attention and why |
 | Revenue | Pipeline, outreach drafting, gap analysis |

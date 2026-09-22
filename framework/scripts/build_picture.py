@@ -16,13 +16,13 @@ E = lambda s: html.escape(str(s), quote=False)
 TODAY = datetime.date.today()
 
 CSS = """
-:root{--bg:#F4F5F6;--panel:#FFF;--ink:#14181C;--muted:#5B6672;--rule:#DCE0E4;--accent:#1F5B6B;
- --accent-soft:#E4EEF1;--warn:#8A5A12;--warn-soft:#F6EEDD;--good:#2F6B43;
+:root{--bg:#F4F5F6;--panel:#FFF;--ink:#14181C;--muted:#5B6672;--rule:#DCE0E4;--accent:#5B4FD1;
+ --accent-soft:#ECEAFB;--warn:#8A5A12;--warn-soft:#F6EEDD;--good:#2F6B43;
  --fs:"Segoe UI",system-ui,-apple-system,sans-serif;--fm:"Cascadia Mono",ui-monospace,Consolas,monospace}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121518;--panel:#191D21;--ink:#E7EBEE;
- --muted:#96A0AA;--rule:#2A3037;--accent:#6FB6C9;--accent-soft:#1B2C33;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}}
+ --muted:#96A0AA;--rule:#2A3037;--accent:#A59CFF;--accent-soft:#232043;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}}
 :root[data-theme=dark]{--bg:#121518;--panel:#191D21;--ink:#E7EBEE;--muted:#96A0AA;--rule:#2A3037;
- --accent:#6FB6C9;--accent-soft:#1B2C33;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}
+ --accent:#A59CFF;--accent-soft:#232043;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--fs)}
 .wrap{max-width:1000px;margin:0 auto;padding-block:40px;padding-left:20px;padding-right:20px}
@@ -82,6 +82,7 @@ def days(d):
 
 def build(root):
     roles = F.notes(root, F.ROLES_DIR)
+    depts = F.notes(root, F.DEPTS_DIR)
     flows = F.notes(root, F.FLOWS_DIR, skip=("Workflows.md",))
     decisions = F.notes(root, F.DECISIONS_DIR)
     everything = F.all_notes(root)
@@ -98,6 +99,14 @@ def build(root):
         if r is not None and r >= 0:
             waiting.append((f"Decision due for review: {d['_name']}",
                             f"its review date passed {r} days ago — it may no longer be the right call"))
+    for d in depts:
+        name = d.get("name") or d["_name"]
+        if not [r for r in roles if (r.get("department") or "") == name]:
+            waiting.append((f"Department with no executive: {name}",
+                            "nobody answers for it, so every question about it comes back to you"))
+        if not [w for w in flows if (w.get("department") or "") == name]:
+            waiting.append((f"Department with no workflow: {name}",
+                            "it is a name until somebody writes down how one piece of its work actually happens"))
     for w in flows:
         if not w.get("owner"):
             waiting.append((f"Workflow with no owner: {w['_name']}",
@@ -125,8 +134,28 @@ def build(root):
         f"<li><b>{E(t)}</b><span class=why>{E(w)}</span></li>" for t, w in waiting) + "</ul>"
         ) if waiting else '<p class="none">Nothing is waiting on you. Everything written down has an owner and a decision.</p>'
 
+
+    def dept_card(d):
+        name = d.get("name") or d["_name"]
+        execs = [r for r in roles if (r.get("department") or "") == name]
+        mine = [w for w in flows if (w.get("department") or "") == name]
+        run = sum(1 for w in mine if w.get("readiness") == "ready")
+        lead = (", ".join(E(r.get("name", r["_name"])) for r in execs)
+                if execs else '<span style="color:var(--warn)">no executive yet</span>')
+        owns = "".join(f"<li>{E(o)}</li>" for o in (d.get("owns") or [])[:3])
+        return (f'<div class="card"><div class="who">{lead}</div><h3>{E(name)}</h3>'
+                f'<p>{E(d.get("succeeds_when") or "No test of whether it is working — add succeeds_when:")}</p>'
+                f'<ul>{owns}</ul>'
+                f'<p style="margin-top:12px">{len(mine)} workflow{"" if len(mine)==1 else "s"}'
+                f'{f", {run} running" if mine else " — a name until one is written down"}</p></div>')
+
+    dept_cards = "".join(dept_card(d) for d in sorted(depts, key=lambda x: x.get("name") or x["_name"])) \
+        or '<div class="card"><h3>No departments yet</h3><p>Run <b>Setting Up a Department</b>. ' \
+           'Until the organisation has named parts, every question lands on one person.</p></div>'
+
     role_cards = "".join(
-        f'<div class="card"><div class="who">{E(r.get("authority","prepare"))}</div>'
+        f'<div class="card"><div class="who">{E(r.get("authority","prepare"))}'
+        f'{" · " + E(r.get("department")) if r.get("department") else " · company-wide"}</div>'
         f'<h3>{E(r.get("name", r["_name"]))}</h3>'
         f'<p>{E((r.get("owns") or ["—"])[0])}</p>'
         f'<ul>{"".join(f"<li>{E(g)}</li>" for g in (r.get("green_list") or [])[:3])}</ul></div>'
@@ -159,6 +188,11 @@ def build(root):
 <p class="sub">Named, not counted — with what each one waits for and what happens if nothing is done.</p>
 <div class="wait">{wait_html}</div></section>
 
+<section><h2>The organisation</h2>
+<p class="sub">{len(depts)} department{"" if len(depts)==1 else "s"}, each with one executive who answers for it.
+A department with no executive, or no workflow, is named above as waiting on you.</p>
+<div class="grid">{dept_cards}</div></section>
+
 <section><h2>Who can act, and how far</h2>
 <p class="sub">{len(roles)} roles, compiled from their notes. Everything off these lists is prepared and handed to a person.</p>
 <div class="grid">{role_cards}</div></section>
@@ -180,10 +214,11 @@ Edit the note that owns the fact and build again. · AI Operations Framework, Me
 </div></body></html>"""
     os.makedirs(os.path.join(root, F.PICTURE_DIR), exist_ok=True)
     io.open(os.path.join(root, F.PICTURE_DIR, "index.html"), "w", encoding="utf-8", newline="\n").write(page)
-    return len(waiting), len(roles), len(flows)
+    return len(waiting), len(roles), len(flows), len(depts)
 
 
 if __name__ == "__main__":
     root = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
-    w, r, f = build(root)
-    print(f"picture rebuilt — {w} thing{'' if w==1 else 's'} waiting on a person, {r} roles, {f} workflows")
+    w, r, f, d = build(root)
+    print(f"picture rebuilt — {w} thing{'' if w==1 else 's'} waiting on a person, "
+          f"{d} department{'' if d==1 else 's'}, {r} roles, {f} workflows")

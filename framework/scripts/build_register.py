@@ -13,25 +13,56 @@ END = "<!-- END generated -->"
 MARK = {"ready": "🟢 running", "partly": "🟡 partly", "not-yet": "⚪ described"}
 
 
+def row(w):
+    return "| [[{}]] | {} | {} | {} | {} |".format(
+        w["_name"], w.get("owner") or "—",
+        "✅ validated" if w.get("doc_status") == "validated" else "✏️ draft",
+        MARK.get(w.get("readiness", ""), "—"),
+        F.summary(w["_body"], "Purpose")[:110] or "—")
+
+
 def build(root):
     flows = F.notes(root, F.FLOWS_DIR, skip=("Workflows.md",))
-    rows = []
-    for w in sorted(flows, key=lambda x: x["_name"]):
-        rows.append("| [[{}]] | {} | {} | {} | {} |".format(
-            w["_name"], w.get("owner") or "—",
-            "✅ validated" if w.get("doc_status") == "validated" else "✏️ draft",
-            MARK.get(w.get("readiness", ""), "—"),
-            F.summary(w["_body"], "Purpose")[:110] or "—"))
+    depts = F.notes(root, F.DEPTS_DIR)
+
+    # Grouped by department, because that is how anyone actually looks for a workflow: they know whose
+    # job it is before they know what it is called. A department with no workflow is listed anyway —
+    # the empty group is the point, not an omission.
+    groups, seen = [], set()
+    for d in sorted(depts, key=lambda x: x.get("name") or x["_name"]):
+        name = d.get("name") or d["_name"]
+        mine = sorted([w for w in flows if (w.get("department") or "") == name], key=lambda x: x["_name"])
+        seen.update(id(w) for w in mine)
+        groups.append((name, mine))
+    company = sorted([w for w in flows if (w.get("department") or "") == F.COMPANY_WIDE],
+                     key=lambda x: x["_name"])
+    seen.update(id(w) for w in company)
+    homeless = sorted([w for w in flows if id(w) not in seen], key=lambda x: x["_name"])
+
+    body = []
+    for name, mine in groups:
+        body += ["", f"### {name}", ""]
+        body += (["| Workflow | Owner | Note | Workflow | Purpose |", "|---|---|---|---|---|"]
+                 + [row(w) for w in mine]) if mine else \
+                ["*No workflow written down yet — this department is a name until one is.*"]
+    if company:
+        body += ["", "### Company-wide", "",
+                 "| Workflow | Owner | Note | Workflow | Purpose |", "|---|---|---|---|---|"] \
+                + [row(w) for w in company]
+    if homeless:
+        body += ["", "### Department not recognised", "",
+                 "*These name a department that has no note. Fix the `department:` field or write the note.*", "",
+                 "| Workflow | Owner | Note | Workflow | Purpose |", "|---|---|---|---|---|"] \
+                + [row(w) for w in homeless]
+
     v = sum(1 for w in flows if w.get("doc_status") == "validated")
     r = sum(1 for w in flows if w.get("readiness") == "ready")
     block = "\n".join([
         BEGIN,
-        f"*{len(flows)} workflows · {v} validated against a real case · {r} running end to end. "
+        f"*{len(flows)} workflows across {len(depts)} department{'' if len(depts)==1 else 's'} · "
+        f"{v} validated against a real case · {r} running end to end. "
         f"Generated {datetime.date.today().isoformat()} — edit the workflow notes, not this table.*",
-        "",
-        "| Workflow | Owner | Note | Workflow | Purpose |",
-        "|---|---|---|---|---|",
-        *rows, "", END])
+        *body, "", END])
     p = os.path.join(root, F.REGISTER)
     if os.path.exists(p):
         cur = F.read(p)

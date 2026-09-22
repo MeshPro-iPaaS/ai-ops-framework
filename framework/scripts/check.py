@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""check.py — ten checks that fail the build when the picture and reality disagree.
+"""check.py — thirteen checks that fail the build when the picture and reality disagree.
 
 Run it before you show anyone the page:  python .ops/scripts/check.py
 Exit 0 = everything the vault says about itself is true. Exit 1 = it is not, and each failure says why.
 
-These ten are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
+These thirteen are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
 and you find out months later.
 """
 from __future__ import annotations
@@ -31,6 +31,9 @@ NAMES = {
     8: "every note can be read by a machine",
     9: "decisions are either decided by somebody, or not decided",
     10: "nothing is filed outside the folders that exist",
+    11: "every department has exactly one executive who answers for it",
+    12: "every executive leads a department that exists",
+    13: "every workflow belongs somewhere",
 }
 
 
@@ -42,7 +45,9 @@ def run(root):
         bad(f"{NAMES[1]} — CLAUDE.md is missing from the vault root, so no session inherits the rules")
 
     roles = F.notes(root, F.ROLES_DIR)
+    depts = F.notes(root, F.DEPTS_DIR)
     flows = F.notes(root, F.FLOWS_DIR, skip=("Workflows.md",))
+    dept_names = {(d.get("name") or d["_name"]) for d in depts}
 
     # 2 — role contracts are complete
     need = ("name", "authority", "reports_to", "owns", "green_list", "never", "writes")
@@ -150,6 +155,50 @@ def run(root):
         bad(f"{NAMES[10]} — {n!r} is a folder nobody declared; either add it to the contract or file its contents")
     if not extra:
         ok(f"{NAMES[10]} ({len(F.FOLDERS)} folders)")
+
+    # 11 — one department, one executive. Two is worse than none: with two, each assumes the other did it.
+    m11 = 0
+    for d in depts:
+        name = d.get("name") or d["_name"]
+        execs = [r["_name"] for r in roles if (r.get("department") or "") == name]
+        if not execs:
+            bad(f"{NAMES[11]} — {name!r} has no executive; every question about it lands back on you")
+            m11 += 1
+        elif len(execs) > 1:
+            bad(f"{NAMES[11]} — {name!r} has {len(execs)} executives ({', '.join(execs)}); "
+                f"with two, each will assume the other answered")
+            m11 += 1
+        for k in ("owns", "succeeds_when"):
+            if not d.get(k):
+                bad(f"{NAMES[11]} — department {name!r} has no {k!r}; "
+                    f"a department that cannot say what it owns or when it is working is a label")
+                m11 += 1
+    if depts and not m11:
+        ok(f"{NAMES[11]} ({len(depts)} departments)")
+    if not depts:
+        bad(f"{NAMES[11]} — there are no departments; run the workflow 'Setting Up a Department'")
+
+    # 12 — a role pointing at a department that was renamed or deleted is the commonest way this drifts
+    m12 = [(r["_name"], r.get("department")) for r in roles
+           if r.get("department") and r.get("department") not in dept_names]
+    for n, d in m12:
+        bad(f"{NAMES[12]} — {n!r} leads {d!r}, and there is no department note by that name")
+    if not m12:
+        ok(f"{NAMES[12]} ({sum(1 for r in roles if r.get('department'))} of {len(roles)} roles lead one)")
+
+    # 13 — blank cannot be told apart from forgotten, so company-wide is written, not left empty
+    m13 = 0
+    for w in flows:
+        d = w.get("department")
+        if not d:
+            bad(f"{NAMES[13]} — {w['_name']!r} names no department; write the department, "
+                f"or {F.COMPANY_WIDE!r} if it genuinely belongs to no single one")
+            m13 += 1
+        elif d != F.COMPANY_WIDE and d not in dept_names:
+            bad(f"{NAMES[13]} — {w['_name']!r} belongs to {d!r}, and there is no department note by that name")
+            m13 += 1
+    if flows and not m13:
+        ok(f"{NAMES[13]} ({len(flows)} workflows)")
 
     return PASS, FAIL
 

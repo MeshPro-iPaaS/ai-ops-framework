@@ -13,12 +13,33 @@ place the rules live, and every AI session in this vault reads it before doing a
    render seven, the build fails. Run `python .ops/scripts/check.py` before you publish anything.
 4. **Only a person publishes, sends, deploys or decides.** Agents prepare. You commit.
 
+## Departments, and the executive layer
+
+The organisation is a set of **departments**. Each one has exactly **one executive** — a role note that
+is compiled into an agent that answers for it. That is the whole structure, and it is deliberately the
+first thing you build, because every other thing here needs an owner and a department is where owners
+come from.
+
+| | |
+|---|---|
+| **A department** | `01 - Company/Departments/{Name}.md` — what it owns, what it does not, and one sentence saying how you would know it is working |
+| **Its executive** | `01 - Company/Roles/{Name}.md` with `department: {Name}` — recommends, never decides |
+| **Above them** | The Chief of Staff, company-wide: routes work, keeps the picture true |
+| **Across them** | The Workflow Architect: owns how a workflow is written down, not what any department does |
+
+Three to six departments. If two of them would never disagree about anything, they are one. The same
+person may answer for several — the department is the unit of **accountability**, not of headcount.
+
+Every workflow names its department, or the word `company` when it genuinely belongs to no single one.
+A blank field cannot be told apart from a forgotten one, so the check refuses it.
+
 ## Where things go
 
 | You are adding… | It goes in… | From the template |
 |---|---|---|
 | A decision you made | `01 - Company/Decisions/DR — {Title}.md` | `Decision.md` |
 | How a piece of work actually happens | `01 - Company/Workflows/{Human name}.md` | `Workflow.md` |
+| A part of the organisation | `01 - Company/Departments/{Name}.md` | `Department.md` |
 | A role an agent plays | `01 - Company/Roles/{Name}.md` | — (see the three installed) |
 | A project or initiative | `02 - Work/{Name}.md` | `Note.md` |
 | A person, customer or partner | `03 - People/{Name}.md` | `Note.md` |
@@ -36,13 +57,15 @@ Every note carries it. Machines can only read state that is written the same way
 
 ```yaml
 ---
-type: workflow | decision | role | project | person | knowledge | daily | weekly | note
+type: workflow | decision | department | role | project | person | knowledge | daily | weekly | note
 status: draft | active | decided | archived
 owner: Name            # who decides about this note, not who typed it
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 ```
+
+Workflows also carry `department:` — the department they belong to, or `company`.
 
 Workflows carry two more marks, and they answer different questions:
 

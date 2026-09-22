@@ -1,6 +1,7 @@
 ---
 type: workflow
 status: active
+department: company
 owner: Chief of Staff
 created: 2026-09-22
 updated: 2026-09-22
