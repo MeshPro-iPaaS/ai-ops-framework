@@ -11,7 +11,7 @@ workflows, four generators, one check suite, one page. No task board, no custome
 no code agents — those are separate packages you add when the base is running and you want more. A setup
 that does everything on day one is a setup nobody finishes reading.
 
-**You start with departments.** Name the parts — for a company its divisions, for one person every hat you wear at work — give each one an executive, and the
+**You start with departments.** Name the parts — for a company its divisions, for one person every part of their own job — give each one an executive, and the
 agents follow from that. Everything else — workflows, decisions, the weekly rhythm — hangs off an owner,
 and a department is where owners come from.
 

@@ -16,8 +16,8 @@ place the rules live, and every AI session in this vault reads it before doing a
 ## Departments, and the executive layer
 
 A **department** is one area somebody answers for. In a company that is Sales or Delivery; for one
-person it is **each hat you wear at work** — the client accounts, the reporting, the LinkedIn posting,
-the recruiting you somehow ended up doing. Same mechanism either way, and the personal version is the
+person it is **each part of their own job** — the client accounts, the reporting, the LinkedIn posting,
+the recruiting they somehow ended up doing. Same mechanism either way, and the personal version is the
 more common one.
 
 Each department has exactly **one executive** — a role note compiled into an agent that answers for it.

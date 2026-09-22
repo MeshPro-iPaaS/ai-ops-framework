@@ -14,8 +14,8 @@ readiness: ready
 
 **Purpose.** Turn the parts you already talk about into named departments, each with one executive who
 answers for it. For a company that is sales, delivery, "the money stuff". **For one person it is every
-hat you wear** — the accounts you look after, the reports you produce, the LinkedIn posting, the thing
-you inherited and nobody else touches. **This is the first thing you do after installing**, before any
+part of their own job** — the accounts you look after, the reports you produce, the LinkedIn posting,
+the thing you inherited and nobody else touches. **This is the first thing you do after installing**, before any
 workflow, because a workflow with no department is a note nobody owns.
 **Trigger.** The install has finished, or the organisation has grown a part that nobody currently answers for.
 **Done means.** A department note exists, one executive role points at it, the agent is compiled, and the
@@ -48,7 +48,7 @@ flowchart TB
 
 | # | Step | Who | What they need | What comes out |
 |---|---|---|---|---|
-| 1 | List the hats you wear, or the parts of the organisation | You | Nothing but your own words | Three to six names — not twelve |
+| 1 | List the parts of your own job, or of the organisation | You | Nothing but your own words | Three to six names — not twelve |
 | 2 | Write one note per department | Chief of Staff | `_Templates/Department.md` | What it owns, **where it stops**, and one sentence for *working* |
 | 3 | Check the boundaries | You | The notes | Two people would file the same thing in the same place |
 | 4 | Give each one an executive | Chief of Staff | `01 - Company/Roles/Operations Executive.md` as the shape | One role note per department, `department:` filled in |
