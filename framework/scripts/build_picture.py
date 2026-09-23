@@ -74,7 +74,7 @@ tr:last-child td{border-bottom:0}
  background:var(--accent-soft);color:var(--accent);white-space:nowrap}
 .pill.warn{background:var(--warn-soft);color:var(--warn)}
 .pill.good{background:transparent;color:var(--good);border:1px solid var(--good)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--rule);
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--rule);
  border:1px solid var(--rule);border-radius:4px;overflow:hidden}
 .stat{background:var(--panel);padding:14px 16px}
 .stat b{display:block;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
