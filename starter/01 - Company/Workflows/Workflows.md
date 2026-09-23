@@ -11,13 +11,15 @@ updated: 2026-09-23
 > Every workflow written down, with two marks each: whether the **note** has been validated against a real case, and whether the **workflow** actually runs. They go wrong separately, which is why there are two.
 
 <!-- BEGIN generated — build_register.py -->
-*8 workflows across 2 departments · 0 validated against a real case · 6 running end to end. Generated 2026-09-23 — edit the workflow notes, not this table.*
+*10 workflows across 2 departments · 0 validated against a real case · 8 running end to end. Generated 2026-09-23 — edit the workflow notes, not this table.*
 
 ### AI Operations
 
 | Workflow | Owner | Note | Workflow | Purpose |
 |---|---|---|---|---|
+| [[Adding a Specialist]] | Workflow Architect | ✏️ draft | 🟢 running | Put a narrow agent under an executive: one job, done properly, handed back when the question is anything else. |
 | [[Keeping the Picture True]] | AI Operations Lead | ✏️ draft | 🟢 running | The page everyone reads rebuilds itself from the notes, and a check refuses it when a stated number would be u |
+| [[Teaching an Executive a Skill]] | Workflow Architect | ✏️ draft | 🟢 running | Give an executive a capability it did not have — a way of doing one thing properly, written down once and used |
 | [[Where Every Fact Lives]] | AI Operations Lead | ✏️ draft | 🟢 running | One home per fact, and a written rule for which home. This is not really a sequence of steps — it is the rule  |
 | [[Writing a Workflow Down]] | Workflow Architect | ✏️ draft | 🟢 running | Turn something people do from memory into a note a machine can read and a colleague can follow. This is the wo |
 

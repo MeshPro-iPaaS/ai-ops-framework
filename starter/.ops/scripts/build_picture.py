@@ -191,8 +191,11 @@ ORG_JS = """
       out.push('<text x="'+(x+BW/2)+'" y="'+(y+BH/2+5)+'" text-anchor="middle" font-size="15" font-weight="600" fill="var(--panel)">You</text>');
       return;
     }
-    var r=named[node]||{}, sub=r.department||'across all departments';
-    out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.4"/>');
+    var r=named[node]||{}, spec=(r.kind==='specialist');
+    var sub=spec?('specialist'+(r.department?' \u00b7 '+r.department:'')):(r.department||'across all departments');
+    out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--panel)" stroke="'+
+             (spec?'var(--rule)':'var(--accent)')+'" stroke-width="'+(spec?1:1.4)+'"'+
+             (spec?' stroke-dasharray="4 3"':'')+'/>');
     out.push('<text x="'+(x+BW/2)+'" y="'+(y+24)+'" text-anchor="middle" font-size="14.5" font-weight="600" fill="var(--ink)">'+esc(clip(node,22))+'</text>');
     out.push('<text x="'+(x+BW/2)+'" y="'+(y+42)+'" text-anchor="middle" font-family="var(--fm)" font-size="11" fill="var(--muted)">'+esc(clip(sub,26))+'</text>');
   });
@@ -214,7 +217,8 @@ def org_block(roles):
              "title": r.get("title") or "",
              "department": r.get("department") or "",
              "reports_to": r.get("reports_to") or "",
-             "authority": r.get("authority") or ""} for r in roles]
+             "authority": r.get("authority") or "",
+             "kind": r.get("kind") or "executive"} for r in roles]
     blob = json.dumps(data, ensure_ascii=False, indent=1).replace("</", "<\\/")
     return ('<!-- BEGIN the hierarchy — edit this list and the chart redraws itself -->\n'
             f'<script type="application/json" id="org-data">{blob}</script>\n'
@@ -232,6 +236,12 @@ def build(root):
     decisions = F.notes(root, F.DECISIONS_DIR)
     everything = F.all_notes(root)
     dept_names = [(d.get("name") or d["_name"]) for d in depts]
+
+    def is_exec(r):
+        return (r.get("kind") or "executive") == "executive"
+
+    execs = [r for r in roles if is_exec(r)]
+    specialists = [r for r in roles if not is_exec(r)]
 
     def execs_of(name):
         return [r for r in roles if (r.get("department") or "") == name]
@@ -313,7 +323,8 @@ def build(root):
 <p class="sub">Counted from the notes at build time. Nothing here was typed in.</p>
 <div class="stats">
   <div class="stat"><b>{len(depts)}</b><span>department{"" if len(depts)==1 else "s"}</span></div>
-  <div class="stat"><b>{len(roles)}</b><span>executives</span></div>
+  <div class="stat"><b>{len(execs)}</b><span>executive{"" if len(execs)==1 else "s"}</span></div>
+  <div class="stat"><b>{len(specialists)}</b><span>specialist{"" if len(specialists)==1 else "s"}</span></div>
   <div class="stat"><b>{len(flows)}</b><span>workflows written down</span></div>
   <div class="stat"><b>{run}</b><span>running end to end</span></div>
   <div class="stat"><b>{len(projects)}</b><span>project{"" if len(projects)==1 else "s"}</span></div>
@@ -336,7 +347,9 @@ def build(root):
     role_cards = ""
     for d in depts:
         name = d.get("name") or d["_name"]
-        mine = execs_of(name)
+        mine = [r for r in execs_of(name) if (r.get("kind") or "executive") == "executive"]
+        spec = [r for r in roles if (r.get("department") or "") == name
+                and (r.get("kind") or "executive") == "specialist"]
         lead = ", ".join(E(r.get("name", r["_name"])) for r in mine) if mine else \
             '<span style="color:var(--warn)">no executive yet</span>'
         cards = "".join(
@@ -347,6 +360,12 @@ def build(root):
             f'<ul>{"".join(f"<li>{E(g)}</li>" for g in (r.get("green_list") or [])[:3])}</ul>'
             f'<p style="margin-top:12px"><b>Stops at:</b> {E((r.get("not_owned") or ["—"])[0])}</p></div>'
             for r in mine)
+        if spec:
+            cards += ('<div class="card" style="border-style:dashed">'
+                      '<div class="who">specialists</div><h3>Working under ' +
+                      E(mine[0].get("name", mine[0]["_name"]) if mine else name) + '</h3><ul>' +
+                      "".join(f'<li><b>{E(r.get("name", r["_name"]))}</b> — '
+                              f'{E((r.get("owns") or ["—"])[0])}</li>' for r in spec) + '</ul></div>')
         role_cards += (f'<div class="deptblock"><div class="hd"><h3>{E(name)}</h3>'
                        f'<span class="led">{lead}</span></div>'
                        f'<p class="sub">{E(d.get("succeeds_when") or "No test of whether it is working — add succeeds_when:")}</p>'
@@ -365,7 +384,8 @@ def build(root):
 <p class="sub">Read from each role's own note — who it reports to, and which department it answers for.
 There is no diagram to maintain: add a department and an executive, rebuild, and it appears here.</p>
 <div class="chart">{org_block(roles)}</div>
-<p class="legend">{len(roles)} executives · {len(depts)} departments · one executive per department</p></section>
+<p class="legend">{len(execs)} executive{"" if len(execs)==1 else "s"} · {len(depts)} department{"" if len(depts)==1 else "s"} ·
+{len(specialists)} specialist{"" if len(specialists)==1 else "s"}, shown dashed, each reporting to one of them</p></section>
 
 <section><h2>What each of them may do</h2>
 <p class="sub">Everything off these lists is prepared and handed to a person. The line that matters most

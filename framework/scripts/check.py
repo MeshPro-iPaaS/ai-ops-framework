@@ -166,7 +166,8 @@ def run(root):
     m11 = 0
     for d in depts:
         name = d.get("name") or d["_name"]
-        execs = [r["_name"] for r in roles if (r.get("department") or "") == name]
+        execs = [r["_name"] for r in roles if (r.get("department") or "") == name
+                 and (r.get("kind") or "executive") == "executive"]
         if not execs:
             bad(f"{NAMES[11]} — {name!r} has no executive; every question about it lands back on you")
             m11 += 1
@@ -187,10 +188,20 @@ def run(root):
     # 12 — a role pointing at a department that was renamed or deleted is the commonest way this drifts
     m12 = [(r["_name"], r.get("department")) for r in roles
            if r.get("department") and r.get("department") not in dept_names]
+    known = {(r.get("name") or r["_name"]) for r in roles}
+    for r in roles:
+        if (r.get("kind") or "executive") == "specialist":
+            boss = (r.get("reports_to") or "").strip()
+            if boss not in known:
+                bad(f"{NAMES[12]} — specialist {r['_name']!r} reports to {boss or 'nobody'}, "
+                    f"and there is no role by that name; a specialist nobody owns is an agent nobody reads")
     for n, d in m12:
         bad(f"{NAMES[12]} — {n!r} leads {d!r}, and there is no department note by that name")
     if not m12:
-        ok(f"{NAMES[12]} ({sum(1 for r in roles if r.get('department'))} of {len(roles)} roles lead one)")
+        e = sum(1 for r in roles if r.get("department") and (r.get("kind") or "executive") == "executive")
+        sp = sum(1 for r in roles if (r.get("kind") or "executive") == "specialist")
+        ok(f"{NAMES[12]} ({e} executives, {sp} specialist{'' if sp == 1 else 's'}, "
+           f"{len(roles) - e - sp} across all departments)")
 
     # 13 — blank cannot be told apart from forgotten, so company-wide is written, not left empty
     m13 = 0
