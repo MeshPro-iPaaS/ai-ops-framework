@@ -69,7 +69,10 @@ def build(root):
         new = re.sub(re.escape(BEGIN) + r".*?" + re.escape(END), block, cur, flags=re.S) \
             if BEGIN in cur else cur.rstrip("\n") + "\n\n" + block + "\n"
     else:
-        new = ("---\ntype: note\nstatus: active\nowner: Chief of Staff\n"
+        # whoever actually holds the Workflow Architect job here — the executives may have been renamed
+        keeper = next((r.get("name") or r["_name"] for r in F.notes(root, F.ROLES_DIR)
+                       if (r.get("title") or "") == "Workflow Architect"), "")
+        new = (f"---\ntype: note\nstatus: active\nowner: {keeper}\n"
                f"created: {datetime.date.today().isoformat()}\nupdated: {datetime.date.today().isoformat()}\n---\n\n"
                "# Workflows\n\n> Every workflow written down, with two marks each: whether the **note** has been "
                "validated against a real case, and whether the **workflow** actually runs. They go wrong "

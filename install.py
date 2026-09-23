@@ -2,7 +2,7 @@
 """
 install.py — AI Operations Framework (MeshPro x Expectus), base package.
 
-    python install.py "C:\\path\\to\\your\\vault"
+    python install.py "C:\\path\\to\\your\\vault" [--names norse]
 
 Creates the folders, installs the contract, templates, departments, roles, workflows and skills, compiles the roles
 into runnable agents, builds the register and the page, and runs the check. Idempotent: run it again
@@ -13,7 +13,7 @@ always refreshed; your contract, roles and workflows are copied in once and then
 after the first install they are yours.
 """
 from __future__ import annotations
-import io, os, sys, shutil, subprocess, datetime
+import io, os, re, sys, shutil, subprocess, datetime
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -21,6 +21,18 @@ if hasattr(sys.stdout, "reconfigure"):
 HERE = os.path.dirname(os.path.abspath(__file__))
 FW = os.path.join(HERE, "framework")
 TODAY = datetime.date.today().isoformat()
+
+# What the three installed executives are called. The job titles are the default and are perfectly
+# good; people remember a name far better than a title, and an executive somebody has named is one
+# they actually talk to. The titles stay in the notes either way, so nothing is lost.
+TITLES = ["Chief of Staff", "AI Operations Lead", "Workflow Architect"]
+SCHEMES = {
+    "titles":     ("their job titles",        TITLES),
+    "norse":      ("Norse mythology",         ["Saga", "Völundur", "Bragi"]),
+    "friends":    ("Friends",                 ["Monica", "Chandler", "Ross"]),
+    "kardashian": ("the Kardashians",         ["Kourtney", "Kim", "Khloé"]),
+    "greek":      ("Greek mythology",         ["Athena", "Hephaestus", "Hermes"]),
+}
 
 FOLDERS = {
     "00 - Inbox": "Anything not yet filed. This folder is emptied, not stored.",
@@ -44,6 +56,111 @@ def say(step, msg):
     print(f"  {step}. {msg}")
 
 
+# Agent filenames want plain ASCII — Völundur is a fine name and a poor filename.
+FOLD = {"á": "a", "à": "a", "ä": "a", "å": "a", "â": "a", "é": "e", "è": "e", "ë": "e", "ê": "e",
+        "í": "i", "ì": "i", "ï": "i", "î": "i", "ó": "o", "ò": "o", "ö": "o", "ø": "o", "ô": "o",
+        "ú": "u", "ù": "u", "ü": "u", "û": "u", "ý": "y", "ñ": "n", "ç": "c", "þ": "th",
+        "ð": "d", "æ": "ae", "ß": "ss"}
+
+
+def slugify(name):
+    out = []
+    for ch in name.lower():
+        for c in FOLD.get(ch, ch):                 # a fold can be two letters: þ is th, æ is ae
+            out.append(c if (c.isalnum() and c.isascii()) else "-")
+    return re.sub(r"-+", "-", "".join(out)).strip("-") or "role"
+
+
+def choose_scheme(arg):
+    """Returns {job title: name}. Empty means leave the titles alone."""
+    if arg:
+        key = arg.strip().lower()
+        if key in SCHEMES:
+            return dict(zip(TITLES, SCHEMES[key][1]))
+        names = [n.strip() for n in arg.split(",") if n.strip()]
+        if len(names) >= len(TITLES):
+            return dict(zip(TITLES, names))
+        print(f"  (I do not know the naming scheme {arg!r}, and it is not a list of "
+              f"{len(TITLES)} names — keeping the job titles.)")
+        return {}
+    if not sys.stdin.isatty():          # a session is running this, not a person at a keyboard
+        return {}
+    print("\nWhat should your three executives be called?\n")
+    keys = list(SCHEMES)
+    for i, k in enumerate(keys, 1):
+        label, names = SCHEMES[k]
+        print(f"  {i}. {label:22} {', '.join(names)}")
+    print(f"  {len(keys)+1}. something else       type {len(TITLES)} names, comma separated\n")
+    try:
+        answer = input("  Choose a number, or type your own names: ").strip()
+    except EOFError:
+        return {}
+    if not answer:
+        return {}
+    if answer.isdigit() and 1 <= int(answer) <= len(keys):
+        return dict(zip(TITLES, SCHEMES[keys[int(answer) - 1]][1]))
+    return choose_scheme(answer) if "," in answer else {}
+
+
+def apply_naming(vault, mapping):
+    """Rename the executives everywhere at once — the role notes, the departments that point at them,
+    and the workflows they own. Done before anything is compiled, so nothing downstream ever sees the
+    old name. The job title stays on each role as `title:`."""
+    if not mapping:
+        return []
+    folders = [os.path.join(vault, "01 - Company", d) for d in ("Roles", "Departments", "Workflows")]
+    pairs = sorted(mapping.items(), key=lambda kv: -len(kv[0]))   # longest first, so no partial hits
+    for folder in folders:
+        for f in sorted(os.listdir(folder)) if os.path.isdir(folder) else []:
+            if not f.endswith(".md"):
+                continue
+            path = os.path.join(folder, f)
+            lines = io.open(path, encoding="utf-8").read().split("\n")
+            for i, line in enumerate(lines):
+                if line.startswith("title:"):      # the job title is the one thing that must not move
+                    continue
+                for old, new in pairs:
+                    line = line.replace(old, new)
+                lines[i] = line
+            io.open(path, "w", encoding="utf-8", newline="\n").write("\n".join(lines))
+    roles = os.path.join(vault, "01 - Company", "Roles")
+    for old, new in pairs:
+        src, dst = os.path.join(roles, old + ".md"), os.path.join(roles, new + ".md")
+        if old != new and os.path.exists(src) and not os.path.exists(dst):
+            os.rename(src, dst)
+    for f in sorted(os.listdir(roles)):
+        if not f.endswith(".md"):
+            continue
+        path = os.path.join(roles, f)
+        text = io.open(path, encoding="utf-8").read()
+        m = re.search(r"^name:\s*(.+)$", text, re.M)
+        if m:
+            text = re.sub(r"^slug:.*$", "slug: " + slugify(m.group(1).strip()), text, count=1, flags=re.M)
+            io.open(path, "w", encoding="utf-8", newline="\n").write(text)
+    return [f"{old} is {new}" for old, new in mapping.items() if old != new]
+
+
+def title_of(path):
+    m = re.search(r"^title:\s*(.+)$", io.open(path, encoding="utf-8").read(), re.M)
+    return m.group(1).strip() if m else ""
+
+
+def titles_present(folder):
+    """The job titles already installed, whatever the executives have since been renamed to.
+
+    Without this, a second run re-adds 'Chief of Staff.md' beside the 'Saga.md' it became, and the
+    check quite rightly complains that the department now has two executives.
+    """
+    out = set()
+    if os.path.isdir(folder):
+        for f in sorted(os.listdir(folder)):
+            if f.endswith(".md"):
+                t = title_of(os.path.join(folder, f))
+                if t:
+                    out.add(t)
+    return out
+
+
 def copy_once(src, dst):
     """Framework content that becomes yours: copied on the first install, never overwritten after."""
     if os.path.exists(dst):
@@ -52,7 +169,7 @@ def copy_once(src, dst):
     return True
 
 
-def main(vault):
+def main(vault, names=None):
     vault = os.path.abspath(vault)
     fresh = not os.path.exists(os.path.join(vault, "CLAUDE.md"))
     print(f"\nAI Operations Framework — base package")
@@ -88,12 +205,21 @@ def main(vault):
     d = sum(copy_once(os.path.join(FW, "departments", f),
                       os.path.join(vault, "01 - Company", "Departments", f))
             for f in sorted(os.listdir(os.path.join(FW, "departments"))))
-    r = sum(copy_once(os.path.join(FW, "roles", f), os.path.join(vault, "01 - Company", "Roles", f))
-            for f in sorted(os.listdir(os.path.join(FW, "roles"))))
+    roles_dir = os.path.join(vault, "01 - Company", "Roles")
+    have = titles_present(roles_dir)
+    r = sum(copy_once(os.path.join(FW, "roles", f), os.path.join(roles_dir, f))
+            for f in sorted(os.listdir(os.path.join(FW, "roles")))
+            if title_of(os.path.join(FW, "roles", f)) not in have)
     w = sum(copy_once(os.path.join(FW, "processes", f), os.path.join(vault, "01 - Company", "Workflows", f))
             for f in sorted(os.listdir(os.path.join(FW, "processes"))))
-    say(4, f"{d} department, {r} roles and {w} workflows installed" if (d or r or w) else
+    say(4, f"{d} departments, {r} roles and {w} workflows installed" if (d or r or w) else
         "departments, roles and workflows left alone — yours to edit")
+
+    # 4b. name the executives, before anything is compiled from them
+    if fresh:
+        renamed = apply_naming(vault, choose_scheme(names))
+        if renamed:
+            say("4b", "your executives: " + " · ".join(renamed))
 
     # 5. skills and scripts (always refreshed)
     sk = os.path.join(vault, ".claude", "skills")
@@ -161,7 +287,20 @@ def main(vault):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    args, scheme, skip = [], None, False
+    for i, a in enumerate(sys.argv[1:]):
+        if skip:
+            skip = False
+            continue
+        if a == "--names":
+            scheme = sys.argv[i + 2] if i + 2 < len(sys.argv) else None
+            skip = True
+        elif a.startswith("--names="):
+            scheme = a.split("=", 1)[1]
+        elif not a.startswith("--"):
+            args.append(a)
+    if not args:
         print(__doc__)
+        print("Naming schemes: " + ", ".join(SCHEMES) + " — or a comma-separated list of your own.")
         sys.exit(2)
-    sys.exit(main(sys.argv[1]))
+    sys.exit(main(args[0], scheme))

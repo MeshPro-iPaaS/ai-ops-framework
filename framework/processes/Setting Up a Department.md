@@ -1,7 +1,7 @@
 ---
 type: workflow
 status: active
-department: company
+department: Head Office
 owner: Chief of Staff
 created: 2026-09-22
 updated: 2026-09-22
@@ -51,7 +51,7 @@ flowchart TB
 | 1 | List the parts of your own job, or of the organisation | You | Nothing but your own words | Three to six names — not twelve |
 | 2 | Write one note per department | Chief of Staff | `_Templates/Department.md` | What it owns, **where it stops**, and one sentence for *working* |
 | 3 | Check the boundaries | You | The notes | Two people would file the same thing in the same place |
-| 4 | Give each one an executive | Chief of Staff | `01 - Company/Roles/Operations Executive.md` as the shape | One role note per department, `department:` filled in |
+| 4 | Give each one an executive | Chief of Staff | `01 - Company/Roles/Chief of Staff.md` as the shape | One role note per department, `department:` filled in |
 | 5 | Compile and rebuild | Chief of Staff | The generators | An agent per executive, and a picture that shows the layer |
 | 6 | Run the check | Chief of Staff | — | Green, or a named reason it is not |
 

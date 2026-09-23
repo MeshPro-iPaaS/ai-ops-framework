@@ -58,7 +58,9 @@ A blank field cannot be told apart from a forgotten one, so the check refuses it
 | Something you have not filed yet | `00 - Inbox/` | — |
 
 Generated, never edited by hand: `01 - Company/Workflows/Workflows.md` (the register),
-`05 - Operations/picture/ai_operations.html` (**your dashboard**), `.claude/agents/` (the compiled roles).
+`05 - Operations/picture/` — a four-page site: **`ai_operations.html`** (the dashboard you open first),
+`agents.html` (who answers for what), `workflows.html` (every workflow in its department block) and
+`projects.html` (the work in flight) — and `.claude/agents/` (the compiled roles).
 
 ## Frontmatter
 

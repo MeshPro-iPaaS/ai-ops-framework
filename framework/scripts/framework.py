@@ -8,8 +8,14 @@ DEPTS_DIR = os.path.join("01 - Company", "Departments")
 ROLES_DIR = os.path.join("01 - Company", "Roles")
 FLOWS_DIR = os.path.join("01 - Company", "Workflows")
 DECISIONS_DIR = os.path.join("01 - Company", "Decisions")
+WORK_DIR = "02 - Work"
 PICTURE_DIR = os.path.join("05 - Operations", "picture")
-PICTURE = os.path.join(PICTURE_DIR, "ai_operations.html")
+PAGE_DASH = "ai_operations.html"
+PAGE_AGENTS = "agents.html"
+PAGE_FLOWS = "workflows.html"
+PAGE_PROJECTS = "projects.html"
+SITE_PAGES = (PAGE_DASH, PAGE_AGENTS, PAGE_FLOWS, PAGE_PROJECTS)
+PICTURE = os.path.join(PICTURE_DIR, PAGE_DASH)   # the page you open first
 REGISTER = os.path.join(FLOWS_DIR, "Workflows.md")
 AGENTS_DIR = os.path.join(".claude", "agents")
 

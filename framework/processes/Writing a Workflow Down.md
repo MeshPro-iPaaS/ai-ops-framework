@@ -1,7 +1,7 @@
 ---
 type: workflow
 status: active
-department: company
+department: AI Operations
 owner: Workflow Architect
 created: 2026-09-22
 updated: 2026-09-22

@@ -22,12 +22,13 @@ and a department is where owners come from.
 | **A contract** | The operating rules every AI session inherits before it does anything |
 | **A folder skeleton** | Eight folders, each with one job, and a rule for what belongs in it |
 | **Six templates** | So state is written the same way every time and a machine can read it |
-| **A department layer** | One department installed as a worked example, and the workflow for naming your own |
-| **Three roles** | Chief of Staff · Operations Executive (the shape every department's executive takes) · Workflow Architect — written contracts compiled into runnable agents |
+| **A department layer** | **Head Office** and **AI Operations** installed, each with one executive, and the workflow for naming your own |
+| **Three executives** | Chief of Staff, an AI Operations Lead and a Workflow Architect — written contracts compiled into runnable agents. **Name them what you like at install**: job titles, Norse, Friends, the Kardashians, Greek, or your own list |
 | **Eight workflows** | Five that keep the vault true, one for naming your departments, two generic examples |
 | **Two skills** | Writing a workflow down, and keeping the picture true |
 | **Four generators** | Roles → agents · workflows → a register · the vault → a page · the whole thing → a check |
-| **One check suite** | Thirteen checks that fail the build when the picture and reality disagree |
+| **A four-page site** | Dashboard · Agent organization · Workflows · Projects. The hierarchy redraws itself whenever you add a department and an executive |
+| **One check suite** | Fifteen checks that fail the build when the picture and reality disagree |
 
 ## Install
 
@@ -46,8 +47,8 @@ somebody who has never opened a terminal.
 python install.py "C:\path\to\your\vault"
 ```
 
-Your dashboard lands at `05 - Operations/picture/ai_operations.html` — a plain local file, rebuilt from
-your notes every time anything changes. The download itself is skipped by every generator and every
+Your site lands in `05 - Operations/picture/` — four plain local files, rebuilt from your notes every
+time anything changes. Open `ai_operations.html` first. The download itself is skipped by every generator and every
 check, wherever it ended up, so it is never mistaken for one of your notes.
 
 Either way it creates the folders, copies the contract, templates, departments, roles, workflows and

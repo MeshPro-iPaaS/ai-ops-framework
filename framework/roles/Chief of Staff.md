@@ -2,6 +2,8 @@
 type: role
 status: active
 name: Chief of Staff
+title: Chief of Staff
+department: Head Office
 slug: chief-of-staff
 reports_to: you
 authority: prepare

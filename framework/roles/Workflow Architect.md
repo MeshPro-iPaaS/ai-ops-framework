@@ -2,6 +2,7 @@
 type: role
 status: active
 name: Workflow Architect
+title: Workflow Architect
 slug: workflow-architect
 reports_to: Chief of Staff
 authority: prepare

@@ -1,8 +1,8 @@
 ---
 type: workflow
 status: active
-department: Operations
-owner: Chief of Staff
+department: AI Operations
+owner: AI Operations Lead
 created: 2026-09-22
 updated: 2026-09-22
 doc_status: draft

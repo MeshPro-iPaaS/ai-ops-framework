@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""check.py — fourteen checks that fail the build when the picture and reality disagree.
+"""check.py — fifteen checks that fail the build when the picture and reality disagree.
 
 Run it before you show anyone the page:  python .ops/scripts/check.py
 Exit 0 = everything the vault says about itself is true. Exit 1 = it is not, and each failure says why.
 
-These fourteen are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
+These fifteen are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
 and you find out months later.
 """
 from __future__ import annotations
@@ -35,6 +35,7 @@ NAMES = {
     12: "every executive leads a department that exists",
     13: "every workflow belongs somewhere",
     14: "the framework's own files are not being read as your notes",
+    15: "every project belongs to a department that exists",
 }
 
 
@@ -112,7 +113,10 @@ def run(root):
 
     # 7 — the picture is newer than its sources
     pic = os.path.join(root, F.PICTURE)
-    if not os.path.exists(pic):
+    gone = [p for p in F.SITE_PAGES if not os.path.exists(os.path.join(root, F.PICTURE_DIR, p))]
+    if gone:
+        bad(f"{NAMES[7]} — the site is missing {', '.join(gone)}; run build_picture.py")
+    elif not os.path.exists(pic):
         bad(f"{NAMES[7]} — the picture has never been built; run build_picture.py")
     else:
         newest, who = 0, ""
@@ -213,6 +217,16 @@ def run(root):
            f"nothing here reads from it")
     else:
         ok(f"{NAMES[14]} (no copy of it inside the vault)")
+
+    # 15 — a project filed under a department that does not exist is invisible on the Projects page
+    projects = F.notes(root, F.WORK_DIR)
+    m15 = [(p["_name"], p.get("department")) for p in projects
+           if p.get("department") and p.get("department") not in dept_names
+           and p.get("department") != F.COMPANY_WIDE]
+    for n, d in m15:
+        bad(f"{NAMES[15]} — project {n!r} names department {d!r}, and there is no note by that name")
+    if not m15:
+        ok(f"{NAMES[15]} ({len(projects)} in 02 - Work)")
 
     return PASS, FAIL
 

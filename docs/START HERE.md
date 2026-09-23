@@ -49,8 +49,12 @@ Write this to Claude, in the project, in exactly these words or your own:
 
 Claude fetches the framework, installs it into your folder and runs the check. It takes about a minute.
 When it finishes you have thirteen folders, a contract, templates, one department, three roles compiled
-into working agents, eight workflows, and your dashboard at
-**`05 - Operations/picture/ai_operations.html`** — open that in a browser.
+into working agents, eight workflows, and a four-page site — dashboard, agent organization, workflows
+and projects — in `05 - Operations/picture/`. Open **`ai_operations.html`** first.
+
+**Claude will ask what to call your executives**: their job titles, or Norse mythology, Friends, the
+Kardashians, Greek, or three names of your own. It changes nothing except what they are called, and a
+name you chose is one you will actually talk to. The job titles stay in the notes either way.
 
 The download itself usually ends up inside your folder. That is fine: every generator and every check
 skips it on sight, so it is never read as one of your notes, and you can delete it once the install has
@@ -66,7 +70,8 @@ Ask:
 
 > **Open the picture and tell me what it says.**
 
-It is `05 - Operations/picture/ai_operations.html`, a plain file in your own folder. Bookmark it.
+It is `05 - Operations/picture/ai_operations.html`, a plain file in your own folder. Bookmark it —
+the other three pages are linked across the top.
 
 The page lists what is waiting on a person, the departments and who answers for each, and every workflow
 with two marks: whether the *note* has been checked against a real case, and whether the *workflow*
