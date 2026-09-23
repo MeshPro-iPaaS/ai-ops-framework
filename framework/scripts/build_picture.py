@@ -226,4 +226,7 @@ if __name__ == "__main__":
     w, r, f, d = build(root)
     print(f"picture rebuilt — {w} thing{'' if w==1 else 's'} waiting on a person, "
           f"{d} department{'' if d==1 else 's'}, {r} roles, {f} workflows")
-    print(f"   {os.path.abspath(os.path.join(root, F.PICTURE))}")
+    # Relative, deliberately. This often runs inside Claude's own copy of the folder, where an
+    # absolute path names a location that does not exist on the person's laptop — and on a projector
+    # that reads as the thing being broken.
+    print(f"   {F.PICTURE.replace(os.sep, '/')}  (inside your folder)")

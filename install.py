@@ -67,10 +67,12 @@ def main(vault):
             os.makedirs(d, exist_ok=True)
             made += 1
         readme = os.path.join(d, "README.md")
-        if not os.path.exists(readme):
-            io.open(readme, "w", encoding="utf-8", newline="\n").write(
-                f"---\ntype: note\nstatus: active\ncreated: {TODAY}\nupdated: {TODAY}\n---\n\n"
-                f"# {os.path.basename(rel)}\n\n> {why}\n")
+        # Always rewritten: this is signage the framework owns, not a note you wrote. Copy-once left
+        # old installs describing the folder the way it worked two versions ago.
+        io.open(readme, "w", encoding="utf-8", newline="\n").write(
+            f"---\ntype: note\nstatus: active\ncreated: {TODAY}\nupdated: {TODAY}\n---\n\n"
+            f"# {os.path.basename(rel)}\n\n> {why}\n\n"
+            f"*Signage, written by the installer. Edit the folder's contents, not this file.*\n")
     say(1, f"{len(FOLDERS)} folders in place ({made} created), each saying what belongs in it")
 
     # 2. the contract
@@ -139,9 +141,12 @@ def main(vault):
                   f"from your notes and your checks. Delete it whenever you like.")
         print()
 
-    dash = os.path.abspath(os.path.join(vault, "05 - Operations", "picture", "ai_operations.html"))
+    # Relative, because the install frequently runs inside Claude's own copy of the folder: an
+    # absolute path there names somewhere that does not exist on the laptop, and anyone watching
+    # reads that as a broken install.
+    dash = "05 - Operations/picture/ai_operations.html"
     if out.returncode == 0:
-        print("Your dashboard — open it in a browser:")
+        print("Your dashboard, inside your folder — open it in a browser:")
         print(f"   {dash}")
         print()
         print("Then open the vault folder in Obsidian, and connect it in Claude.")
