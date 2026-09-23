@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Workflows</title><style>
+:root{--bg:#F4F5F6;--panel:#FFF;--ink:#14181C;--muted:#5B6672;--rule:#DCE0E4;--accent:#5B4FD1;
+ --accent-soft:#ECEAFB;--warn:#8A5A12;--warn-soft:#F6EEDD;--good:#2F6B43;
+ --fs:"Segoe UI",system-ui,-apple-system,sans-serif;--fm:"Cascadia Mono",ui-monospace,Consolas,monospace}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121518;--panel:#191D21;--ink:#E7EBEE;
+ --muted:#96A0AA;--rule:#2A3037;--accent:#A59CFF;--accent-soft:#232043;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}}
+:root[data-theme=dark]{--bg:#121518;--panel:#191D21;--ink:#E7EBEE;--muted:#96A0AA;--rule:#2A3037;
+ --accent:#A59CFF;--accent-soft:#232043;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--fs)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px 56px}
+nav{border-bottom:1px solid var(--rule);background:var(--panel);position:sticky;top:0;z-index:5}
+nav .in{max-width:1040px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:2px;align-items:center}
+nav a{display:inline-block;padding:14px 14px 11px;font-size:14px;text-decoration:none;color:var(--muted);
+ border-bottom:3px solid transparent}
+nav a:hover{color:var(--ink)}
+nav a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;
+ border-bottom:2px solid var(--ink);padding:36px 0 14px}
+h1{font-size:26px;margin:0;letter-spacing:-.01em}
+.stamp{font:400 12px/1 var(--fm);color:var(--muted)}
+section{margin-top:34px}
+h2{font-size:19px;margin:0 0 4px}
+.sub{font-size:13px;color:var(--muted);margin:0 0 16px;max-width:70ch}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px}
+.card h3{margin:0 0 2px;font-size:16px}
+.card .who{font:400 12px/1 var(--fm);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.card p{margin:10px 0 0;font-size:14px;color:var(--muted)}
+.card ul{margin:10px 0 0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+.wait{background:var(--warn-soft);border:1px solid var(--warn);border-radius:4px;padding:16px 18px}
+.wait ul{margin:0;padding-left:0;list-style:none}
+.wait li{padding:9px 0;border-top:1px solid var(--rule);font-size:14.5px}
+.wait li:first-child{border-top:0}
+.wait .why{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.none{color:var(--good);font-size:14.5px;margin:0}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:620px}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:4px 16px}
+th{text-align:left;font:500 11px/1.3 var(--fm);letter-spacing:.09em;text-transform:uppercase;
+ white-space:nowrap;color:var(--muted);padding:12px 14px 8px 0;border-bottom:1px solid var(--rule)}
+td{padding:11px 14px 11px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font:500 11.5px/1 var(--fm);padding:4px 8px;border-radius:3px;
+ background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.good{background:transparent;color:var(--good);border:1px solid var(--good)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--rule);
+ border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.stat{background:var(--panel);padding:14px 16px}
+.stat b{display:block;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.deptblock{margin-top:26px}
+.deptblock .hd{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between;
+ border-bottom:1px solid var(--rule);padding-bottom:7px;margin-bottom:12px}
+.deptblock .hd h3{margin:0;font-size:17px}
+.deptblock .hd .led{font:400 12px/1 var(--fm);color:var(--accent);text-transform:uppercase;letter-spacing:.07em}
+.empty{color:var(--muted);font-size:14px;font-style:italic;padding:6px 0}
+.chart{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:22px 18px;overflow-x:auto}
+.chart svg{display:block;margin:0 auto}
+.legend{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}}
+</style></head><body>
+<nav><div class="in"><a href="ai_operations.html">Dashboard</a><a href="agents.html">Agent organization</a><a href="workflows.html" class=on>Workflows</a><a href="projects.html">Projects</a></div></nav>
+<div class="wrap">
+<div class="top"><h1>How the work actually happens</h1><span class="stamp">built 2026-09-23 · <span class="pill warn">never run</span></span></div>
+
+<section><h2>Two marks, not one</h2>
+<p class="sub"><b>Validated</b> means a person walked a real case through the note. <b>Running</b> means
+the workflow itself works end to end. They go wrong separately, which is why there are two of them.</p>
+<div class="stats">
+  <div class="stat"><b>8</b><span>written down</span></div>
+  <div class="stat"><b>0</b><span>validated against a real case</span></div>
+  <div class="stat"><b>6</b><span>running end to end</span></div>
+  <div class="stat"><b>2</b><span>departments</span></div>
+</div></section>
+<section><h2>By department</h2><div class="deptblock"><div class="hd"><h3>Head Office</h3><span class="led">Chief of Staff · 5 workflows, 3 running</span></div><div class="tw"><table><thead><tr><th>Workflow</th><th>Owner</th><th>The note</th><th>The workflow</th></tr></thead><tbody><tr><td><b>Changing How You Work</b><br><span style="color:var(--muted);font-size:13px">When the way you work changes, change it in one place and let everything downstream follow — instead of discovering six…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Making a Decision</b><br><span style="color:var(--muted);font-size:13px">Make decisions once, in writing, with the reasoning attached — so that in six months you can tell the difference…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Running Your Week</b><br><span style="color:var(--muted);font-size:13px">Close the week honestly and open the next one. This is the workflow that stops a vault becoming a graveyard: everything…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill warn">partly running</span></td></tr><tr><td><b>Setting Up a Department</b><br><span style="color:var(--muted);font-size:13px">Turn the parts you already talk about into named departments, each with one executive who answers for it. For a company…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Setting Up a Project</b><br><span style="color:var(--muted);font-size:13px">Turn "we should do something about X" into a piece of work with a stated outcome, a named owner and a way to tell…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill warn">partly running</span></td></tr></tbody></table></div></div><div class="deptblock"><div class="hd"><h3>AI Operations</h3><span class="led">AI Operations Lead · 3 workflows, 3 running</span></div><div class="tw"><table><thead><tr><th>Workflow</th><th>Owner</th><th>The note</th><th>The workflow</th></tr></thead><tbody><tr><td><b>Keeping the Picture True</b><br><span style="color:var(--muted);font-size:13px">The page everyone reads rebuilds itself from the notes, and a check refuses it when a stated number would be untrue…</span></td><td>AI Operations Lead</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Where Every Fact Lives</b><br><span style="color:var(--muted);font-size:13px">One home per fact, and a written rule for which home. This is not really a sequence of steps — it is the rule the other…</span></td><td>AI Operations Lead</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Writing a Workflow Down</b><br><span style="color:var(--muted);font-size:13px">Turn something people do from memory into a note a machine can read and a colleague can follow. This is the workflow…</span></td><td>Workflow Architect</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr></tbody></table></div></div></section>
+<footer>Generated from the notes by <code>build_picture.py</code> — a view, never a second source of
+truth. Edit the note that owns the fact and build again. · AI Operations Framework, MeshPro × Expectus</footer>
+</div></body></html>

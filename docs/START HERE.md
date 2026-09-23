@@ -60,6 +60,11 @@ The download itself usually ends up inside your folder. That is fine: every gene
 skips it on sight, so it is never read as one of your notes, and you can delete it once the install has
 run. `.ops/framework-source/` is the tidy place for it if you would rather keep it.
 
+> **If Claude says it cannot run programs on your computer** — some setups can only read and write
+> files — say: *then copy everything in the starter folder into mine instead.* You get exactly the same
+> vault. The one difference: the check cannot run, and the dashboard will say so rather than pretend.
+> Everything you actually do today — departments, executives, workflows — works either way.
+
 > **If Claude says it cannot reach the address** — some company networks block it — download the
 > repository as a ZIP in your browser instead, unzip it anywhere, and say: *install the framework from
 > the folder I just unzipped into my vault folder.* Same result.

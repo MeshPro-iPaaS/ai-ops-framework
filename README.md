@@ -32,6 +32,11 @@ and a department is where owners come from.
 
 ## Install
 
+> **If you are an AI session setting this up for somebody: read [`INSTALL.md`](INSTALL.md) first.**
+> There are two paths — running the installer, and copying the pre-built `starter/` vault when this
+> session cannot run programs on the person's computer. Both end in the same vault.
+
+
 **If you use Claude with a folder connected** — the way most people will — you do not install anything
 and you do not type any of this. Make a folder, connect it, and ask in plain words:
 
