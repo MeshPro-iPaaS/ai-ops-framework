@@ -49,7 +49,12 @@ Write this to Claude, in the project, in exactly these words or your own:
 
 Claude fetches the framework, installs it into your folder and runs the check. It takes about a minute.
 When it finishes you have thirteen folders, a contract, templates, one department, three roles compiled
-into working agents, eight workflows, and a page.
+into working agents, eight workflows, and your dashboard at
+**`05 - Operations/picture/ai_operations.html`** — open that in a browser.
+
+The download itself usually ends up inside your folder. That is fine: every generator and every check
+skips it on sight, so it is never read as one of your notes, and you can delete it once the install has
+run. `.ops/framework-source/` is the tidy place for it if you would rather keep it.
 
 > **If Claude says it cannot reach the address** — some company networks block it — download the
 > repository as a ZIP in your browser instead, unzip it anywhere, and say: *install the framework from
@@ -60,6 +65,8 @@ into working agents, eight workflows, and a page.
 Ask:
 
 > **Open the picture and tell me what it says.**
+
+It is `05 - Operations/picture/ai_operations.html`, a plain file in your own folder. Bookmark it.
 
 The page lists what is waiting on a person, the departments and who answers for each, and every workflow
 with two marks: whether the *note* has been checked against a real case, and whether the *workflow*

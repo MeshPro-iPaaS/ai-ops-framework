@@ -58,7 +58,7 @@ A blank field cannot be told apart from a forgotten one, so the check refuses it
 | Something you have not filed yet | `00 - Inbox/` | — |
 
 Generated, never edited by hand: `01 - Company/Workflows/Workflows.md` (the register),
-`05 - Operations/picture/` (the page), `.ops/agents/` (the compiled roles).
+`05 - Operations/picture/ai_operations.html` (**your dashboard**), `.claude/agents/` (the compiled roles).
 
 ## Frontmatter
 
@@ -101,6 +101,13 @@ the rest safe to run when nobody is watching.
 
 A note left `draft` for three weeks is not neutral — agents read status as fact, so a stale note actively
 misleads. Give it a disposition: promote it, archive it, or delete it.
+
+## Where the framework's own files live
+
+If the download landed inside this vault — which is what usually happens — it is **not** part of your
+notes. Every generator and every check skips it on sight, so it cannot be read as something you wrote,
+and you can delete it whenever you like. `.ops/framework-source/` is the tidy place for it if you want
+to keep it for re-running the installer.
 
 ## Changing this file
 

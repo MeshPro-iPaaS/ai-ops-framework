@@ -12,7 +12,7 @@ The page everyone reads is generated. Your job is to make it true again, in this
 1. **Find the one note that owns the fact** that changed. The contract's routing table says which. If the
    fact appears in two notes, that is the finding — report it before doing anything else.
 2. **Edit that note.** Never a generated file: `01 - Company/Workflows/Workflows.md`, anything under
-   `05 - Operations/picture/`, and everything in `.claude/agents/` are outputs.
+   `05 - Operations/picture/ai_operations.html` (the dashboard), and everything in `.claude/agents/` are outputs.
 3. **Run the generators, in order:**
    ```
    python .ops/scripts/build_roles.py

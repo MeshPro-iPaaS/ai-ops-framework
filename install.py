@@ -33,7 +33,8 @@ FOLDERS = {
     "02 - Work": "The things you are actually doing — projects and initiatives.",
     "03 - People": "Colleagues, customers, partners: whoever you keep a record about.",
     "04 - Knowledge": "Reference material that stays true regardless of what you are doing this week.",
-    "05 - Operations": "The generated picture and the lists of what is waiting.",
+    "05 - Operations": "The generated picture and the lists of what is waiting. "
+                       "Your dashboard is picture/ai_operations.html — open it in a browser.",
     "06 - Daily": "The day log. Append-only, and never a source of truth.",
     "_Templates": "The shapes every new note is made from.",
 }
@@ -110,7 +111,7 @@ def main(vault):
     for i, script in enumerate(("build_roles.py", "build_register.py", "build_picture.py"), start=6):
         out = subprocess.run([sys.executable, os.path.join(ops, script), vault],
                              capture_output=True, text=True)
-        say(i, (out.stdout or out.stderr).strip().splitlines()[-1] if (out.stdout or out.stderr)
+        say(i, (out.stdout or out.stderr).strip().splitlines()[0] if (out.stdout or out.stderr)
             else f"{script} ran")
 
     # 9. check
@@ -123,14 +124,33 @@ def main(vault):
     print()
     print(out.stdout.strip())
     print()
+
+    # If the download landed inside the vault — which is what usually happens — say so plainly.
+    # Nothing reads from it, but it is clutter and people wonder whether it is meant to be there.
+    sys.path.insert(0, ops)
+    try:
+        import framework as _F
+        inside = _F.source_trees(vault)
+    except Exception:
+        inside = []
+    if inside:
+        for t in inside:
+            print(f"Your copy of the framework is at {os.path.relpath(t, vault)} — it is excluded "
+                  f"from your notes and your checks. Delete it whenever you like.")
+        print()
+
+    dash = os.path.abspath(os.path.join(vault, "05 - Operations", "picture", "ai_operations.html"))
     if out.returncode == 0:
-        print("Open 05 - Operations/picture/index.html in a browser — that is your picture.")
+        print("Your dashboard — open it in a browser:")
+        print(f"   {dash}")
+        print()
         print("Then open the vault folder in Obsidian, and connect it in Claude.")
         print()
         print("First thing to do: name your departments. Ask Claude to walk you through")
         print("'Setting Up a Department' — it is the workflow the rest of the layer hangs off.")
     else:
         print("The check found something untrue. Fix the note it names, then run this again.")
+        print(f"The dashboard, such as it is: {dash}")
     print(f"\nAI Operations Framework, base package — MeshPro x Expectus\n")
     return out.returncode
 

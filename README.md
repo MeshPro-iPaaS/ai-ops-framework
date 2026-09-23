@@ -46,6 +46,10 @@ somebody who has never opened a terminal.
 python install.py "C:\path\to\your\vault"
 ```
 
+Your dashboard lands at `05 - Operations/picture/ai_operations.html` — a plain local file, rebuilt from
+your notes every time anything changes. The download itself is skipped by every generator and every
+check, wherever it ended up, so it is never mistaken for one of your notes.
+
 Either way it creates the folders, copies the contract, templates, departments, roles, workflows and
 skills in, compiles the roles into agents, builds the register and the page, and runs the check. It is
 idempotent — run it again after any change and it brings everything back in line.

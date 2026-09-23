@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """build_picture.py — the one page everyone reads, generated from the notes.
 
-Output: 05 - Operations/picture/index.html  (open it in a browser; it is a plain local file)
+Output: 05 - Operations/picture/ai_operations.html  (open it in a browser; it is a plain local file)
 
 It states four things and nothing it cannot prove: what is waiting on a person, who the roles are and
 what each may do unsupervised, every workflow with its two marks, and whether the check was green the
@@ -213,7 +213,11 @@ means the workflow itself works end to end. They go wrong separately.</p>
 Edit the note that owns the fact and build again. · AI Operations Framework, MeshPro × Expectus</footer>
 </div></body></html>"""
     os.makedirs(os.path.join(root, F.PICTURE_DIR), exist_ok=True)
-    io.open(os.path.join(root, F.PICTURE_DIR, "index.html"), "w", encoding="utf-8", newline="\n").write(page)
+    io.open(os.path.join(root, F.PICTURE), "w", encoding="utf-8", newline="\n").write(page)
+    # the page used to be index.html; leave no stale copy behind for someone to open by mistake
+    stale = os.path.join(root, F.PICTURE_DIR, "index.html")
+    if os.path.exists(stale):
+        os.remove(stale)
     return len(waiting), len(roles), len(flows), len(depts)
 
 
@@ -222,3 +226,4 @@ if __name__ == "__main__":
     w, r, f, d = build(root)
     print(f"picture rebuilt — {w} thing{'' if w==1 else 's'} waiting on a person, "
           f"{d} department{'' if d==1 else 's'}, {r} roles, {f} workflows")
+    print(f"   {os.path.abspath(os.path.join(root, F.PICTURE))}")

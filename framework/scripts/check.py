@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""check.py — thirteen checks that fail the build when the picture and reality disagree.
+"""check.py — fourteen checks that fail the build when the picture and reality disagree.
 
 Run it before you show anyone the page:  python .ops/scripts/check.py
 Exit 0 = everything the vault says about itself is true. Exit 1 = it is not, and each failure says why.
 
-These thirteen are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
+These fourteen are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
 and you find out months later.
 """
 from __future__ import annotations
@@ -34,6 +34,7 @@ NAMES = {
     11: "every department has exactly one executive who answers for it",
     12: "every executive leads a department that exists",
     13: "every workflow belongs somewhere",
+    14: "the framework's own files are not being read as your notes",
 }
 
 
@@ -110,7 +111,7 @@ def run(root):
             ok(f"{NAMES[6]} ({len(flows)} listed)")
 
     # 7 — the picture is newer than its sources
-    pic = os.path.join(root, F.PICTURE_DIR, "index.html")
+    pic = os.path.join(root, F.PICTURE)
     if not os.path.exists(pic):
         bad(f"{NAMES[7]} — the picture has never been built; run build_picture.py")
     else:
@@ -150,7 +151,8 @@ def run(root):
     # 10 — nothing outside the folders
     extra = [n for n in sorted(os.listdir(root))
              if os.path.isdir(os.path.join(root, n))
-             and n not in F.FOLDERS and not n.startswith((".", "_"))]
+             and n not in F.FOLDERS and not n.startswith((".", "_"))
+             and not F.is_source_tree(os.path.join(root, n))]
     for n in extra:
         bad(f"{NAMES[10]} — {n!r} is a folder nobody declared; either add it to the contract or file its contents")
     if not extra:
@@ -199,6 +201,18 @@ def run(root):
             m13 += 1
     if flows and not m13:
         ok(f"{NAMES[13]} ({len(flows)} workflows)")
+
+    # 14 — the framework's own source, wherever it was downloaded to, is machinery and not notes.
+    # This check exists because the first real install failed ten of the other thirteen for exactly
+    # this reason: the download landed in the vault and every README, SKILL and template in it was
+    # read as a note the owner had written badly.
+    trees = F.source_trees(root)
+    if trees:
+        where = ", ".join(os.path.relpath(t, root).replace(os.sep, "/") for t in trees)
+        ok(f"{NAMES[14]} — excluded the copy at {where}; delete it whenever you like, "
+           f"nothing here reads from it")
+    else:
+        ok(f"{NAMES[14]} (no copy of it inside the vault)")
 
     return PASS, FAIL
 

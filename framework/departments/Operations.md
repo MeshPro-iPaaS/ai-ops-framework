@@ -36,7 +36,7 @@ The **Operations Executive** — `01 - Company/Roles/Operations Executive.md`, c
 
 ## How you know it is working
 
-Somebody back from a week away opens `05 - Operations/picture/index.html` and knows what happened, what
+Somebody back from a week away opens `05 - Operations/picture/ai_operations.html` and knows what happened, what
 is waiting and what is stale — without asking anyone. If they have to ask, this department is not working
 yet, whatever the page says.
 

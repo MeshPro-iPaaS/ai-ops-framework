@@ -9,6 +9,7 @@ ROLES_DIR = os.path.join("01 - Company", "Roles")
 FLOWS_DIR = os.path.join("01 - Company", "Workflows")
 DECISIONS_DIR = os.path.join("01 - Company", "Decisions")
 PICTURE_DIR = os.path.join("05 - Operations", "picture")
+PICTURE = os.path.join(PICTURE_DIR, "ai_operations.html")
 REGISTER = os.path.join(FLOWS_DIR, "Workflows.md")
 AGENTS_DIR = os.path.join(".claude", "agents")
 
@@ -59,6 +60,35 @@ def note(p):
 # one into an agent called "README".
 SIGNAGE = {"README.md", "CLAUDE.md"}
 
+# Folders that are machinery, not notes.
+SKIP_DIRS = {".claude", ".ops", ".git", ".obsidian", "picture", "__pycache__", "node_modules"}
+
+
+def is_source_tree(d):
+    """True if d is a copy of this framework's own repository.
+
+    The download usually lands *inside* the vault — that is the natural thing for a session to do
+    with a folder it has just been handed, and for a while it was what our own guide said to do.
+    Its files are not the user's notes. Read as notes they fail ten of the thirteen checks, and the
+    first thing a new owner sees is a wall of red about files they never wrote. So the rule lives
+    here, in the one parser everything shares, rather than in an instruction somebody can not follow.
+    """
+    return (os.path.isfile(os.path.join(d, "install.py"))
+            and os.path.isfile(os.path.join(d, "framework", "vault", "CONTRACT.md")))
+
+
+def source_trees(root):
+    """Every copy of the framework's own source sitting inside the vault, outermost first."""
+    found = []
+    for r, dirs, _ in os.walk(root):
+        dirs[:] = [x for x in dirs if x not in SKIP_DIRS]
+        for x in list(dirs):
+            p = os.path.join(r, x)
+            if is_source_tree(p):
+                found.append(p.replace(os.sep, "/"))
+                dirs.remove(x)
+    return sorted(found)
+
 
 def notes(root, sub, skip=()):
     out = []
@@ -82,7 +112,8 @@ def summary(body, label):
 def all_notes(root):
     out = []
     for r, d, f in os.walk(root):
-        d[:] = [x for x in d if x not in (".claude", ".ops", ".git", ".obsidian", "picture", "__pycache__")]
+        d[:] = [x for x in d
+                if x not in SKIP_DIRS and not is_source_tree(os.path.join(r, x))]
         for n in f:
             if n.endswith(".md") and n not in SIGNAGE:
                 out.append(note(os.path.join(r, n)))
