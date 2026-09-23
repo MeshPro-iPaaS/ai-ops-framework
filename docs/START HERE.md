@@ -48,9 +48,9 @@ Write this to Claude, in the project, in exactly these words or your own:
 > github.com/MeshPro-iPaaS/ai-ops-framework and run the install, then tell me what it made.**
 
 Claude fetches the framework, installs it into your folder and runs the check. It takes about a minute.
-When it finishes you have thirteen folders, a contract, templates, one department, three roles compiled
-into working agents, eight workflows, and a four-page site — dashboard, agent organization, workflows
-and projects — in `05 - Operations/picture/`. Open **`ai_operations.html`** first.
+When it finishes you have thirteen folders, a contract, templates, two departments, three roles compiled
+into working agents, ten workflows, three skills, and a five-page site — dashboard, agent organization,
+skills, workflows and projects — in `05 - Operations/picture/`. Open **`ai_operations.html`** first.
 
 **Claude will ask what to call your executives**: their job titles, or Norse mythology, Friends, the
 Kardashians, Greek, or three names of your own. It changes nothing except what they are called, and a

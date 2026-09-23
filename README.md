@@ -25,10 +25,10 @@ and a department is where owners come from.
 | **A department layer** | **Head Office** and **AI Operations** installed, each with one executive, and the workflow for naming your own |
 | **Three executives** | Chief of Staff, an AI Operations Lead and a Workflow Architect — written contracts compiled into runnable agents. **Name them what you like at install**: job titles, Norse, Friends, the Kardashians, Greek, or your own list |
 | **Eight workflows** | Five that keep the vault true, one for naming your departments, two generic examples |
-| **Two skills** | Writing a workflow down, and keeping the picture true |
+| **Three skills** | Writing a workflow down, keeping the picture true, and keeping it true by hand when nothing can run |
 | **Four generators** | Roles → agents · workflows → a register · the vault → a page · the whole thing → a check |
-| **A four-page site** | Dashboard · Agent organization · Workflows · Projects. The hierarchy redraws itself whenever you add a department and an executive |
-| **One check suite** | Fifteen checks that fail the build when the picture and reality disagree |
+| **A five-page site** | Dashboard · Agent organization · Skills · Workflows · Projects. The hierarchy redraws itself whenever you add a department and an executive, the skill catalog reads itself off `.claude/skills/`, and clicking a workflow draws its steps |
+| **One check suite** | Sixteen checks that fail the build when the picture and reality disagree |
 
 ## Install
 

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""check.py — fifteen checks that fail the build when the picture and reality disagree.
+"""check.py — sixteen checks that fail the build when the picture and reality disagree.
 
 Run it before you show anyone the page:  python .ops/scripts/check.py
 Exit 0 = everything the vault says about itself is true. Exit 1 = it is not, and each failure says why.
 
-These fifteen are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
+These sixteen are the base. Add one the same session you add a rule — a rule with no check decays, quietly,
 and you find out months later.
 """
 from __future__ import annotations
-import io, os, sys, json, glob, datetime
+import io, os, sys, json, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import framework as F
 
@@ -27,7 +27,7 @@ NAMES = {
     4: "every workflow carries both of its marks",
     5: "validated means somebody actually walked a case through it",
     6: "the register matches the workflow notes",
-    7: "the picture is not older than what it draws from",
+    7: "the site was built from the notes as they are now",
     8: "every note can be read by a machine",
     9: "decisions are either decided by somebody, or not decided",
     10: "nothing is filed outside the folders that exist",
@@ -36,6 +36,7 @@ NAMES = {
     13: "every workflow belongs somewhere",
     14: "the framework's own files are not being read as your notes",
     15: "every project belongs to a department that exists",
+    16: "every skill is owned by an executive and says when to use it",
 }
 
 
@@ -64,17 +65,18 @@ def run(root):
     if not roles:
         bad(f"{NAMES[2]} — there are no roles at all")
 
-    # 3 — agents are current
+    # 3 — agents say what their role notes say. Content, not timestamps: copying a vault resets every
+    # mtime, and the timestamp version of this check failed three times on a perfectly correct copy.
+    import build_roles as BR
     stale = []
     for r in roles:
-        slug = r.get("slug") or r["_name"].lower().replace(" ", "-")
-        a = os.path.join(root, F.AGENTS_DIR, slug + ".md")
+        a = os.path.join(root, F.AGENTS_DIR, BR.slug_of(r) + ".md")
         if not os.path.exists(a):
             bad(f"{NAMES[3]} — {r['_name']!r} has no compiled agent; run build_roles.py")
-        elif os.path.getmtime(a) < os.path.getmtime(r["_path"]):
+        elif F.read(a).replace("\r\n", "\n") != BR.agent_text(r):
             stale.append(r["_name"])
     for n in stale:
-        bad(f"{NAMES[3]} — the agent for {n!r} is older than its role note; run build_roles.py")
+        bad(f"{NAMES[3]} — the agent for {n!r} no longer says what its role note says; run build_roles.py")
     if roles and not stale:
         ok(NAMES[3])
 
@@ -119,15 +121,19 @@ def run(root):
     elif not os.path.exists(pic):
         bad(f"{NAMES[7]} — the picture has never been built; run build_picture.py")
     else:
-        newest, who = 0, ""
-        for p in glob.glob(os.path.join(root, "01 - Company", "**", "*.md"), recursive=True):
-            if os.path.getmtime(p) > newest:
-                newest, who = os.path.getmtime(p), os.path.relpath(p, root)
-        if newest > os.path.getmtime(pic):
-            mins = int((newest - os.path.getmtime(pic)) / 60)
-            bad(f"{NAMES[7]} — {who} changed {mins} minutes after the picture was built; run build_picture.py")
-        else:
+        stamp = {}
+        bp = os.path.join(root, F.PICTURE_DIR, "build.json")
+        if os.path.exists(bp):
+            try:
+                stamp = json.loads(F.read(bp))
+            except Exception:
+                stamp = {}
+        if stamp.get("sources") == F.source_fingerprint(root):
             ok(NAMES[7])
+        elif stamp:
+            bad(f"{NAMES[7]} — a note has changed since the site was built; run build_picture.py")
+        else:
+            bad(f"{NAMES[7]} — the site does not record what it was built from; run build_picture.py")
 
     # 8 — frontmatter every machine can read
     everything = F.all_notes(root)
@@ -238,6 +244,31 @@ def run(root):
         bad(f"{NAMES[15]} — project {n!r} names department {d!r}, and there is no note by that name")
     if not m15:
         ok(f"{NAMES[15]} ({len(projects)} in 02 - Work)")
+
+    # 16 — a skill is a capability the site advertises, so it has to say who reaches for it and when.
+    # An unowned skill is not a small untidiness: nothing will ever think to use it, and the catalog
+    # claims a capability the organisation does not actually have.
+    skills = F.skills(root)
+    m16 = 0
+    for sk in skills:
+        if not (sk.get("description") or "").strip():
+            bad(f"{NAMES[16]} — skill {sk['_name']!r} has no description; the description is the only "
+                f"thing that decides whether it is ever picked up")
+            m16 += 1
+        want = (sk.get("owner") or "").strip()
+        if not want:
+            bad(f"{NAMES[16]} — skill {sk['_name']!r} names no owner; add owner: with an executive's "
+                f"name or job title, or nothing will reach for it")
+            m16 += 1
+        elif not F.owner_of(sk, roles):
+            bad(f"{NAMES[16]} — skill {sk['_name']!r} is owned by {want!r}, and there is no role by "
+                f"that name or title")
+            m16 += 1
+    if skills and not m16:
+        ok(f"{NAMES[16]} ({len(skills)} skills)")
+    if not skills:
+        bad(f"{NAMES[16]} — there are no skills at all; the install should have put three in "
+            f".claude/skills/")
 
     return PASS, FAIL
 

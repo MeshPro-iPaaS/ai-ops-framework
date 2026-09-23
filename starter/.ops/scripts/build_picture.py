@@ -4,10 +4,11 @@
 Output: 05 - Operations/picture/
     ai_operations.html   the dashboard — what is waiting on a person, and whether the check is green
     agents.html          the executive hierarchy, redrawn from the role notes every build
-    workflows.html       every workflow, in department blocks
+    skills.html          the skill catalog, read from .claude/skills and grouped by who reaches for it
+    workflows.html       every workflow, in department blocks; click one to see its steps drawn
     projects.html        what is actually being worked on
 
-Four pages, one stylesheet, one nav. Nothing here is a second source of truth: every number is counted
+Five pages, one stylesheet, one nav. Nothing here is a second source of truth: every number is counted
 from the notes at build time, and the hierarchy is read from each role's `reports_to` and `department`,
 so adding a department and an executive redraws it with no diagram to maintain.
 """
@@ -21,6 +22,7 @@ TODAY = datetime.date.today()
 
 PAGES = [("ai_operations.html", "Dashboard"),
          ("agents.html", "Agent organization"),
+         ("skills.html", "Skills"),
          ("workflows.html", "Workflows"),
          ("projects.html", "Projects")]
 
@@ -86,9 +88,45 @@ tr:last-child td{border-bottom:0}
 .chart{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:22px 18px;overflow-x:auto}
 .chart svg{display:block;margin:0 auto}
 .legend{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center}
+.skill{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px}
+.skill h3{margin:0;font-size:16px}
+.skill .slug{font:400 11.5px/1 var(--fm);color:var(--muted);margin-top:4px;display:block}
+.skill p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.skill .stop{margin-top:11px;padding-top:9px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.skill.orphan{border-style:dashed}
+tr[data-flow]{cursor:pointer}
+tr[data-flow] td:first-child b{position:relative;padding-left:16px;display:inline-block}
+tr[data-flow] td:first-child b::before{content:"";position:absolute;left:0;top:5px;width:0;height:0;
+ border:5px solid transparent;border-left-color:var(--accent);transition:transform .12s;
+ transform-origin:3px 5px}
+tr[data-flow].open td:first-child b::before{transform:rotate(90deg)}
+tr[data-flow]:hover td{background:var(--accent-soft)}
+tr.detail>td{padding:0 0 18px;border-bottom:1px solid var(--rule)}
+.flowbox{padding:4px 0 0}
+ol.flow{list-style:none;margin:6px 0 0;padding:0 0 0 4px}
+ol.flow li{position:relative;padding:0 0 16px 44px;min-height:30px}
+ol.flow li::before{content:"";position:absolute;left:13px;top:26px;bottom:-4px;width:2px;background:var(--rule)}
+ol.flow li:last-child::before{display:none}
+.fnum{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;display:flex;
+ align-items:center;justify-content:center;font:600 12.5px/1 var(--fm);background:var(--accent-soft);
+ color:var(--accent);border:1px solid var(--accent)}
+li.person .fnum{background:transparent;color:var(--muted);border-color:var(--muted)}
+li.done .fnum{background:transparent;color:var(--good);border-color:var(--good)}
+.fbody b{display:block;font-size:14.5px;line-height:1.35}
+.fwho{display:inline-block;margin-top:3px;font:400 11.5px/1 var(--fm);text-transform:uppercase;
+ letter-spacing:.07em;color:var(--accent)}
+li.person .fwho{color:var(--muted)}
+.fio{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+.flowlegend{margin:14px 0 0;font-size:12.5px;color:var(--muted)}
 footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
-@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}}
+@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}
+ tr.detail>td{display:table-cell}[hidden]{display:revert!important}}
 """
+
+
+def plain(s):
+    """Markdown code ticks are punctuation in the note and noise on the page."""
+    return (s or "").replace("`", "")
 
 
 def clip(s, n):
@@ -144,7 +182,7 @@ ORG_JS = """
 (function(){
   var el=document.getElementById('org-data'); if(!el) return;
   var data=JSON.parse(el.textContent||el.innerText), ROOT='You';
-  var BW=178,BH=58,HG=22,VG=48;
+  var BW=188,BH=58,HG=22,VG=48;
   var named={}; data.forEach(function(r){ if(r&&r.name) named[r.name]=r; });
   var kids={};
   Object.keys(named).sort().forEach(function(n){
@@ -227,6 +265,73 @@ def org_block(roles):
             f'<script>{ORG_JS}</script>')
 
 
+# ---------------------------------------------------------------- the step diagrams
+# Same bargain as the hierarchy: the page carries the steps as data and draws them itself. The steps
+# are read out of each workflow note's own step table, so there is no diagram anywhere that can drift
+# away from the table — and a session that cannot run these generators keeps the picture true by
+# editing a list, not by computing a layout.
+FLOW_JS = """
+(function(){
+  var el=document.getElementById('flow-data'); if(!el) return;
+  var d=JSON.parse(el.textContent||el.innerText), flows=d.flows||{}, people=d.roles||[];
+  function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function draw(key){
+    var f=flows[key];
+    if(!f) return '<p class="empty">Nothing to draw for this one.</p>';
+    if(!f.steps||!f.steps.length)
+      return '<p class="empty">This note has no step table yet, so there is nothing to draw. '+
+             'Ask for <b>Writing a Workflow Down</b> and the steps get written properly.</p>';
+    var h='<ol class="flow">';
+    f.steps.forEach(function(s){
+      var agent = people.indexOf(String(s.who||'').trim())>=0;
+      h+='<li class="'+(agent?'agent':'person')+'"><span class="fnum">'+esc(s.n)+'</span><div class="fbody"><b>'+esc(s.step)+'</b>';
+      if(s.who) h+='<span class="fwho">'+esc(s.who)+'</span>';
+      if(s.needs||s.out) h+='<span class="fio">'+esc(s.needs||'—')+'  →  '+esc(s.out||'—')+'</span>';
+      h+='</div></li>';
+    });
+    if(f.done) h+='<li class="done"><span class="fnum">✓</span><div class="fbody"><b>Done means</b><span class="fio">'+esc(f.done)+'</span></div></li>';
+    h+='</ol>';
+    h+='<p class="flowlegend">Read from this workflow’s own step table. A filled number is a step an '+
+       'agent can take; an outlined one waits on a person.'+(f.owner?' Owner: <b>'+esc(f.owner)+'</b>.':'')+'</p>';
+    return h;
+  }
+  function toggle(tr){
+    var det=tr.nextElementSibling;
+    if(!det||det.className.indexOf('detail')<0) return;
+    if(det.hasAttribute('hidden')){
+      if(!det.getAttribute('data-drawn')){
+        det.getElementsByClassName('flowbox')[0].innerHTML=draw(tr.getAttribute('data-flow'));
+        det.setAttribute('data-drawn','1');
+      }
+      det.removeAttribute('hidden'); tr.className='open'; tr.setAttribute('aria-expanded','true');
+    } else {
+      det.setAttribute('hidden',''); tr.className=''; tr.setAttribute('aria-expanded','false');
+    }
+  }
+  function rowOf(n){ while(n&&n.nodeName!=='TR'){ n=n.parentNode; } return (n&&n.getAttribute&&n.getAttribute('data-flow'))?n:null; }
+  document.addEventListener('click',function(e){ var tr=rowOf(e.target); if(tr) toggle(tr); });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ') return;
+    var tr=rowOf(e.target); if(tr){ e.preventDefault(); toggle(tr); }
+  });
+})();
+"""
+
+
+def flow_block(flows, roles):
+    """Every workflow's steps as data, plus the few lines that draw them."""
+    data = {"roles": sorted({(r.get("name") or r["_name"]) for r in roles}
+                            | {(r.get("title") or "") for r in roles} - {""}),
+            "flows": {w["_name"]: {"owner": w.get("owner") or "",
+                                   "done": plain(F.summary(w["_body"], "Done means")),
+                                   "steps": F.steps(w["_body"])} for w in flows}}
+    blob = json.dumps(data, ensure_ascii=False, indent=1).replace("</", "<\\/")
+    return ('<!-- BEGIN the steps — edit this list and the step diagrams redraw themselves -->\n'
+            f'<script type="application/json" id="flow-data">{blob}</script>\n'
+            '<!-- END the steps -->\n'
+            f'<script>{FLOW_JS}</script>')
+
+
 # ---------------------------------------------------------------- the build
 def build(root):
     roles = F.notes(root, F.ROLES_DIR)
@@ -234,6 +339,7 @@ def build(root):
     flows = F.notes(root, F.FLOWS_DIR, skip=("Workflows.md",))
     projects = [n for n in F.notes(root, F.WORK_DIR) if n.get("type") != "note" or n.get("outcome")]
     decisions = F.notes(root, F.DECISIONS_DIR)
+    skills = F.skills(root)
     everything = F.all_notes(root)
     dept_names = [(d.get("name") or d["_name"]) for d in depts]
 
@@ -273,6 +379,14 @@ def build(root):
         if not w.get("owner"):
             waiting.append((f"Workflow with no owner: {w['_name']}",
                             "nobody is accountable when it goes wrong, so nobody will notice when it does"))
+    for sk in skills:
+        if not F.owner_of(sk, roles):
+            waiting.append((f"Skill nobody reaches for: {sk['_name']}",
+                            "no executive owns it" + (f" ({sk.get('owner')} is not a role)" if sk.get("owner")
+                                                      else ", so nothing will ever think to use it")))
+        if not (sk.get("description") or "").strip():
+            waiting.append((f"Skill with no trigger: {sk['_name']}",
+                            "its description is what decides whether it gets picked up at all, and it is empty"))
     for p in projects:
         if not p.get("owner"):
             waiting.append((f"Project with no owner: {p['_name']}",
@@ -325,6 +439,7 @@ def build(root):
   <div class="stat"><b>{len(depts)}</b><span>department{"" if len(depts)==1 else "s"}</span></div>
   <div class="stat"><b>{len(execs)}</b><span>executive{"" if len(execs)==1 else "s"}</span></div>
   <div class="stat"><b>{len(specialists)}</b><span>specialist{"" if len(specialists)==1 else "s"}</span></div>
+  <div class="stat"><b>{len(skills)}</b><span>skill{"" if len(skills)==1 else "s"}</span></div>
   <div class="stat"><b>{len(flows)}</b><span>workflows written down</span></div>
   <div class="stat"><b>{run}</b><span>running end to end</span></div>
   <div class="stat"><b>{len(projects)}</b><span>project{"" if len(projects)==1 else "s"}</span></div>
@@ -335,8 +450,10 @@ def build(root):
 <div class="grid">
   <div class="card"><h3><a href="agents.html">Agent organization</a></h3>
     <p>Who answers for what, drawn from the role notes. Add a department with an executive and it redraws itself.</p></div>
+  <div class="card"><h3><a href="skills.html">Skills</a></h3>
+    <p>What each executive knows how to do, read from the skill folder. Teach one and it appears here.</p></div>
   <div class="card"><h3><a href="workflows.html">Workflows</a></h3>
-    <p>Every workflow in its department block, with two marks each: is the note true, and does it run.</p></div>
+    <p>Every workflow in its department block, with two marks each. Click one to see its steps drawn.</p></div>
   <div class="card"><h3><a href="projects.html">Projects</a></h3>
     <p>What is actually being worked on, who owns it, and what is late.</p></div>
 </div></section>"""
@@ -393,18 +510,95 @@ is the last one on each card — where that executive stops.</p>
 {role_cards}</section>"""
     write(F.PAGE_AGENTS, shell("Agent organization", F.PAGE_AGENTS, "Who answers for what", org, stamp))
 
-    # ---- 3. workflows, in department blocks
+
+    # ---- 3. the skill catalog
+    def skill_card(sk, owner):
+        stop = sk.get("_stops") or ""
+        when = sk.get("_when") or ""
+        return (f'<div class="skill{"" if owner else " orphan"}">'
+                f'<h3>{E(sk["_name"])}</h3>'
+                f'<span class="slug">.claude/skills/{E(sk["_slug"])}/</span>'
+                f'<p>{E(clip(plain(sk.get("description") or when) or "No description — nothing will trigger it.", 260))}</p>'
+                + (f'<p class="stop"><b>Stops at:</b> {E(clip(plain(stop), 180))}</p>' if stop else "")
+                + '</div>')
+
+    owned = {}
+    orphans = []
+    for sk in sorted(skills, key=lambda x: x["_name"].lower()):
+        o = F.owner_of(sk, roles)
+        if o:
+            owned.setdefault(o.get("name") or o["_name"], []).append(sk)
+        else:
+            orphans.append(sk)
+
+    sk_blocks = ""
+    for d in depts:
+        name = d.get("name") or d["_name"]
+        here = [(r, owned.get(r.get("name") or r["_name"], [])) for r in execs_of(name)]
+        here = [(r, v) for r, v in here if v]
+        if not here:
+            continue
+        cnt = sum(len(v) for _, v in here)
+        sk_blocks += (f'<div class="deptblock"><div class="hd"><h3>{E(name)}</h3>'
+                      f'<span class="led">{cnt} skill{"" if cnt == 1 else "s"}</span></div>')
+        for r, v in here:
+            rn = r.get("name") or r["_name"]
+            sk_blocks += (f'<p class="sub" style="margin:10px 0 8px"><b>{E(rn)}</b> reaches for '
+                          f'{"this one" if len(v) == 1 else f"these {len(v)}"}</p>'
+                          f'<div class="grid">{"".join(skill_card(x, r) for x in v)}</div>')
+        sk_blocks += "</div>"
+    spanning_sk = [(r, owned.get(r.get("name") or r["_name"], []))
+                   for r in roles if not r.get("department")]
+    spanning_sk = [(r, v) for r, v in spanning_sk if v]
+    for r, v in spanning_sk:
+        rn = r.get("name") or r["_name"]
+        sk_blocks += (f'<div class="deptblock"><div class="hd"><h3>{E(rn)}</h3>'
+                      f'<span class="led">across every department · {len(v)} skill'
+                      f'{"" if len(v) == 1 else "s"}</span></div>'
+                      f'<div class="grid">{"".join(skill_card(x, r) for x in v)}</div></div>')
+    if orphans:
+        sk_blocks += ('<div class="deptblock"><div class="hd"><h3>Nobody reaches for these</h3>'
+                      '<span class="led">add owner: to the skill, or a name that matches a role</span>'
+                      '</div><div class="grid">'
+                      + "".join(skill_card(x, None) for x in orphans) + "</div></div>")
+
+    sk_page = f"""
+<section><h2>One method, written down once</h2>
+<p class="sub">A skill is one method, written down once: when to use it, how it goes, and where it stops.
+Read from <code>.claude/skills/</code> every time this site is built — teach an executive a skill and it
+is here on the next build, with no list to keep up to date.</p>
+<div class="stats">
+  <div class="stat"><b>{len(skills)}</b><span>skill{"" if len(skills) == 1 else "s"}</span></div>
+  <div class="stat"><b>{len(skills) - len(orphans)}</b><span>owned by an executive</span></div>
+  <div class="stat"><b>{len(orphans)}</b><span>nobody reaches for</span></div>
+  <div class="stat"><b>{len(owned)}</b><span>executive{"" if len(owned) == 1 else "s"} with one</span></div>
+</div></section>
+
+<section><h2>By who reaches for it</h2>
+{sk_blocks or '<p class="empty">No skills yet. Ask for <b>Teaching an Executive a Skill</b> and the first one gets written properly.</p>'}
+</section>"""
+    write(F.PAGE_SKILLS, shell("Skills", F.PAGE_SKILLS, "What each executive knows how to do",
+                               sk_page, stamp))
+
+    # ---- 4. workflows, in department blocks
     def wf_table(rows):
-        body = "".join(
-            '<tr><td><b>{}</b><br><span style="color:var(--muted);font-size:13px">{}</span></td>'
-            '<td>{}</td><td>{}</td><td>{}</td></tr>'.format(
+        body = ""
+        for w in rows:
+            n = len(F.steps(w["_body"]))
+            body += (
+                '<tr data-flow="{k}" tabindex="0" role="button" aria-expanded="false">'
+                '<td><b>{}</b><br><span style="color:var(--muted);font-size:13px">{}</span></td>'
+                '<td>{}</td><td>{}</td><td>{}</td></tr>'
+                '<tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr>'
+            ).format(
                 E(w["_name"]), E(clip(F.summary(w["_body"], "Purpose"), 120)), E(w.get("owner") or "—"),
                 '<span class="pill good">validated</span>' if w.get("doc_status") == "validated"
                 else '<span class="pill">note is a draft</span>',
                 {"ready": '<span class="pill good">running</span>',
                  "partly": '<span class="pill warn">partly running</span>'}.get(
-                    w.get("readiness"), '<span class="pill">described only</span>'))
-            for w in rows)
+                    w.get("readiness"), '<span class="pill">described only</span>'),
+                k=html.escape(w["_name"], quote=True))
+            del n
         return ('<div class="tw"><table><thead><tr><th>Workflow</th><th>Owner</th><th>The note</th>'
                 f'<th>The workflow</th></tr></thead><tbody>{body}</tbody></table></div>')
 
@@ -413,7 +607,11 @@ is the last one on each card — where that executive stops.</p>
         name = d.get("name") or d["_name"]
         mine = flows_of(name)
         placed.update(id(w) for w in mine)
-        lead = ", ".join(E(r.get("name", r["_name"])) for r in execs_of(name)) or "no executive yet"
+        heads = [r for r in execs_of(name) if is_exec(r)]
+        helpers = [r for r in execs_of(name) if not is_exec(r)]
+        lead = ", ".join(E(r.get("name", r["_name"])) for r in heads) or "no executive yet"
+        if helpers:
+            lead += f' +{len(helpers)} specialist' + ("" if len(helpers) == 1 else "s")
         r = sum(1 for w in mine if w.get("readiness") == "ready")
         blocks += (f'<div class="deptblock"><div class="hd"><h3>{E(name)}</h3>'
                    f'<span class="led">{lead} · {len(mine)} workflow{"" if len(mine)==1 else "s"}'
@@ -444,10 +642,14 @@ the workflow itself works end to end. They go wrong separately, which is why the
   <div class="stat"><b>{run}</b><span>running end to end</span></div>
   <div class="stat"><b>{len(depts)}</b><span>departments</span></div>
 </div></section>
-<section><h2>By department</h2>{blocks}</section>"""
+<section><h2>By department</h2>
+<p class="sub">Click any workflow to see its steps drawn — read straight out of that note\u2019s own step
+table, so the picture cannot say something the note does not.</p>
+{blocks}</section>
+{flow_block(flows, roles)}"""
     write(F.PAGE_FLOWS, shell("Workflows", F.PAGE_FLOWS, "How the work actually happens", wf, stamp))
 
-    # ---- 4. projects
+    # ---- 5. projects
     def pj_table(rows):
         body = ""
         for p in rows:
@@ -483,17 +685,23 @@ owner and a way to tell when it is finished — not a list of activities.</p>
 </section>"""
     write(F.PAGE_PROJECTS, shell("Projects", F.PAGE_PROJECTS, "The work in flight", pj, stamp))
 
+    # what the site was built from, so the check can ask the question by content and not by clock
+    io.open(os.path.join(root, F.PICTURE_DIR, "build.json"), "w", encoding="utf-8",
+            newline="\n").write(json.dumps({"built": TODAY.isoformat(),
+                                            "sources": F.source_fingerprint(root)}, indent=1))
+
     # the page used to be index.html; leave no stale copy for somebody to open by mistake
     stale = os.path.join(root, F.PICTURE_DIR, "index.html")
     if os.path.exists(stale):
         os.remove(stale)
 
-    return len(waiting), len(roles), len(flows), len(depts), len(projects)
+    return len(waiting), (len(execs), len(specialists)), len(flows), len(depts), len(projects), len(skills)
 
 
 if __name__ == "__main__":
     root = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
-    w, r, f, d, p = build(root)
+    w, (ex, sp), f, d, p, sk = build(root)
     print(f"site rebuilt — {len(PAGES)} pages · {w} thing{'' if w==1 else 's'} waiting on a person, "
-          f"{d} department{'' if d==1 else 's'}, {r} executives, {f} workflows, {p} projects")
+          f"{d} department{'' if d==1 else 's'}, {ex} executives, {sp} specialist{'' if sp==1 else 's'}, "
+          f"{sk} skills, {f} workflows, {p} projects")
     print(f"   {F.PICTURE.replace(os.sep, '/')}  (inside your folder)")

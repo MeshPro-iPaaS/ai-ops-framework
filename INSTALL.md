@@ -12,7 +12,7 @@ python install.py "<the connected folder>"
 ```
 
 It creates the folders, installs the contract, templates, departments, roles, workflows and skills,
-compiles the roles into agents, builds the four-page site, and runs the check. It will ask what the
+compiles the roles into agents, builds the five-page site, and runs the check. It will ask what the
 three executives should be called; `--names norse` (or `friends`, `kardashian`, `greek`, `titles`, or a
 comma-separated list) answers that without a prompt.
 
@@ -23,7 +23,7 @@ Plenty of sessions can read and write files in a connected folder and nothing mo
 **Copy everything inside `starter/` into the connected folder** — all of it, including the hidden
 `.claude` and `.ops` folders. That is the same vault this repository's installer produces: the folders,
 the contract as `CLAUDE.md`, the templates, two departments, three executives already compiled into
-working agents, eight workflows, and the four-page site.
+working agents, ten workflows, three skills, and the five-page site.
 
 Then tell the person, in plain words:
 

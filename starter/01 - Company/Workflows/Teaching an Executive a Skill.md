@@ -16,8 +16,8 @@ readiness: ready
 down once and used the same way every time. A skill is the difference between an agent that improvises
 and one that follows your method.
 **Trigger.** You explain the same approach to an executive twice.
-**Done means.** A skill exists in `.claude/skills/`, its executive knows to reach for it, and somebody
-has used it once.
+**Done means.** A skill exists in `.claude/skills/`, names its executive in `owner:`, appears on the
+Skills page, and somebody has used it once.
 **Owner.** Workflow Architect.
 
 ## How it runs today
@@ -31,8 +31,8 @@ flowchart TB
 
     A(["👤 I keep explaining this the same way"]):::human
     B["🤖 write it down as a skill — when to use it, the steps, where it stops"]:::ai
-    C[("⚙️ .claude/skills/{name}/SKILL.md")]:::store
-    D["🤖 name it on its executive's role note"]:::ai
+    C[("⚙️ .claude/skills/{name}/SKILL.md, with owner: set")]:::store
+    D["🤖 rebuild — it appears in the skill catalog"]:::ai
     E{"👤 use it once on something real"}:::gate
     F["🤖 fix what the real case showed"]:::ai
     A --> B --> C --> D --> E --> F --> C
@@ -45,7 +45,7 @@ flowchart TB
 | 1 | Say what you keep repeating | You | Your own words | The method, out loud |
 | 2 | Write it as a skill | Workflow Architect | `_Templates/Skill.md` | `.claude/skills/{name}/SKILL.md` |
 | 3 | Say when it applies | Workflow Architect | Step 1 | A description concrete enough to trigger on |
-| 4 | Name it on the executive | Workflow Architect | The role note | The executive knows it exists |
+| 4 | Set owner: to its executive | Workflow Architect | A name or a job title | It appears under that executive in the catalog |
 | 5 | Use it on something real | You | A live case | Proof, or a list of what it got wrong |
 | 6 | Fix what the case showed | Workflow Architect | Step 5 | A skill that survived contact |
 
@@ -54,6 +54,7 @@ flowchart TB
 | The exception | How often | What we do |
 |---|---|---|
 | The description is vague, so nothing ever triggers it | Most first drafts | Name the situation, not the topic |
+| It is written with no `owner:`, so nothing reaches for it | Easy to do | The catalog lists it under *Nobody reaches for these* and the check fails — set `owner:` |
 | The skill quietly becomes a second copy of a workflow | Common | A workflow is how work moves; a skill is how one step is done well. If it has an owner and a trigger, it is a workflow |
 | It is written from how you wish you worked | Always tempting | Write the version that includes the messy part |
 

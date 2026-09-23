@@ -62,10 +62,41 @@ tr:last-child td{border-bottom:0}
 .chart{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:22px 18px;overflow-x:auto}
 .chart svg{display:block;margin:0 auto}
 .legend{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center}
+.skill{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px}
+.skill h3{margin:0;font-size:16px}
+.skill .slug{font:400 11.5px/1 var(--fm);color:var(--muted);margin-top:4px;display:block}
+.skill p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.skill .stop{margin-top:11px;padding-top:9px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.skill.orphan{border-style:dashed}
+tr[data-flow]{cursor:pointer}
+tr[data-flow] td:first-child b{position:relative;padding-left:16px;display:inline-block}
+tr[data-flow] td:first-child b::before{content:"";position:absolute;left:0;top:5px;width:0;height:0;
+ border:5px solid transparent;border-left-color:var(--accent);transition:transform .12s;
+ transform-origin:3px 5px}
+tr[data-flow].open td:first-child b::before{transform:rotate(90deg)}
+tr[data-flow]:hover td{background:var(--accent-soft)}
+tr.detail>td{padding:0 0 18px;border-bottom:1px solid var(--rule)}
+.flowbox{padding:4px 0 0}
+ol.flow{list-style:none;margin:6px 0 0;padding:0 0 0 4px}
+ol.flow li{position:relative;padding:0 0 16px 44px;min-height:30px}
+ol.flow li::before{content:"";position:absolute;left:13px;top:26px;bottom:-4px;width:2px;background:var(--rule)}
+ol.flow li:last-child::before{display:none}
+.fnum{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;display:flex;
+ align-items:center;justify-content:center;font:600 12.5px/1 var(--fm);background:var(--accent-soft);
+ color:var(--accent);border:1px solid var(--accent)}
+li.person .fnum{background:transparent;color:var(--muted);border-color:var(--muted)}
+li.done .fnum{background:transparent;color:var(--good);border-color:var(--good)}
+.fbody b{display:block;font-size:14.5px;line-height:1.35}
+.fwho{display:inline-block;margin-top:3px;font:400 11.5px/1 var(--fm);text-transform:uppercase;
+ letter-spacing:.07em;color:var(--accent)}
+li.person .fwho{color:var(--muted)}
+.fio{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+.flowlegend{margin:14px 0 0;font-size:12.5px;color:var(--muted)}
 footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
-@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}}
+@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}
+ tr.detail>td{display:table-cell}[hidden]{display:revert!important}}
 </style></head><body>
-<nav><div class="in"><a href="ai_operations.html">Dashboard</a><a href="agents.html">Agent organization</a><a href="workflows.html" class=on>Workflows</a><a href="projects.html">Projects</a></div></nav>
+<nav><div class="in"><a href="ai_operations.html">Dashboard</a><a href="agents.html">Agent organization</a><a href="skills.html">Skills</a><a href="workflows.html" class=on>Workflows</a><a href="projects.html">Projects</a></div></nav>
 <div class="wrap">
 <div class="top"><h1>How the work actually happens</h1><span class="stamp">built 2026-09-23 · <span class="pill warn">never run</span></span></div>
 
@@ -78,7 +109,476 @@ the workflow itself works end to end. They go wrong separately, which is why the
   <div class="stat"><b>8</b><span>running end to end</span></div>
   <div class="stat"><b>2</b><span>departments</span></div>
 </div></section>
-<section><h2>By department</h2><div class="deptblock"><div class="hd"><h3>Head Office</h3><span class="led">Chief of Staff · 5 workflows, 3 running</span></div><div class="tw"><table><thead><tr><th>Workflow</th><th>Owner</th><th>The note</th><th>The workflow</th></tr></thead><tbody><tr><td><b>Changing How You Work</b><br><span style="color:var(--muted);font-size:13px">When the way you work changes, change it in one place and let everything downstream follow — instead of discovering six…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Making a Decision</b><br><span style="color:var(--muted);font-size:13px">Make decisions once, in writing, with the reasoning attached — so that in six months you can tell the difference…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Running Your Week</b><br><span style="color:var(--muted);font-size:13px">Close the week honestly and open the next one. This is the workflow that stops a vault becoming a graveyard: everything…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill warn">partly running</span></td></tr><tr><td><b>Setting Up a Department</b><br><span style="color:var(--muted);font-size:13px">Turn the parts you already talk about into named departments, each with one executive who answers for it. For a company…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Setting Up a Project</b><br><span style="color:var(--muted);font-size:13px">Turn "we should do something about X" into a piece of work with a stated outcome, a named owner and a way to tell…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill warn">partly running</span></td></tr></tbody></table></div></div><div class="deptblock"><div class="hd"><h3>AI Operations</h3><span class="led">AI Operations Lead · 5 workflows, 5 running</span></div><div class="tw"><table><thead><tr><th>Workflow</th><th>Owner</th><th>The note</th><th>The workflow</th></tr></thead><tbody><tr><td><b>Adding a Specialist</b><br><span style="color:var(--muted);font-size:13px">Put a narrow agent under an executive: one job, done properly, handed back when the question is anything else…</span></td><td>Workflow Architect</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Keeping the Picture True</b><br><span style="color:var(--muted);font-size:13px">The page everyone reads rebuilds itself from the notes, and a check refuses it when a stated number would be untrue…</span></td><td>AI Operations Lead</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Teaching an Executive a Skill</b><br><span style="color:var(--muted);font-size:13px">Give an executive a capability it did not have — a way of doing one thing properly, written down once and used the same…</span></td><td>Workflow Architect</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Where Every Fact Lives</b><br><span style="color:var(--muted);font-size:13px">One home per fact, and a written rule for which home. This is not really a sequence of steps — it is the rule the other…</span></td><td>AI Operations Lead</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr><td><b>Writing a Workflow Down</b><br><span style="color:var(--muted);font-size:13px">Turn something people do from memory into a note a machine can read and a colleague can follow. This is the workflow…</span></td><td>Workflow Architect</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr></tbody></table></div></div></section>
+<section><h2>By department</h2>
+<p class="sub">Click any workflow to see its steps drawn — read straight out of that note’s own step
+table, so the picture cannot say something the note does not.</p>
+<div class="deptblock"><div class="hd"><h3>Head Office</h3><span class="led">Chief of Staff · 5 workflows, 3 running</span></div><div class="tw"><table><thead><tr><th>Workflow</th><th>Owner</th><th>The note</th><th>The workflow</th></tr></thead><tbody><tr data-flow="Changing How You Work" tabindex="0" role="button" aria-expanded="false"><td><b>Changing How You Work</b><br><span style="color:var(--muted);font-size:13px">When the way you work changes, change it in one place and let everything downstream follow — instead of discovering six…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Making a Decision" tabindex="0" role="button" aria-expanded="false"><td><b>Making a Decision</b><br><span style="color:var(--muted);font-size:13px">Make decisions once, in writing, with the reasoning attached — so that in six months you can tell the difference…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Running Your Week" tabindex="0" role="button" aria-expanded="false"><td><b>Running Your Week</b><br><span style="color:var(--muted);font-size:13px">Close the week honestly and open the next one. This is the workflow that stops a vault becoming a graveyard: everything…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill warn">partly running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Setting Up a Department" tabindex="0" role="button" aria-expanded="false"><td><b>Setting Up a Department</b><br><span style="color:var(--muted);font-size:13px">Turn the parts you already talk about into named departments, each with one executive who answers for it. For a company…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Setting Up a Project" tabindex="0" role="button" aria-expanded="false"><td><b>Setting Up a Project</b><br><span style="color:var(--muted);font-size:13px">Turn "we should do something about X" into a piece of work with a stated outcome, a named owner and a way to tell…</span></td><td>Chief of Staff</td><td><span class="pill">note is a draft</span></td><td><span class="pill warn">partly running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr></tbody></table></div></div><div class="deptblock"><div class="hd"><h3>AI Operations</h3><span class="led">AI Operations Lead · 5 workflows, 5 running</span></div><div class="tw"><table><thead><tr><th>Workflow</th><th>Owner</th><th>The note</th><th>The workflow</th></tr></thead><tbody><tr data-flow="Adding a Specialist" tabindex="0" role="button" aria-expanded="false"><td><b>Adding a Specialist</b><br><span style="color:var(--muted);font-size:13px">Put a narrow agent under an executive: one job, done properly, handed back when the question is anything else…</span></td><td>Workflow Architect</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Keeping the Picture True" tabindex="0" role="button" aria-expanded="false"><td><b>Keeping the Picture True</b><br><span style="color:var(--muted);font-size:13px">The page everyone reads rebuilds itself from the notes, and a check refuses it when a stated number would be untrue…</span></td><td>AI Operations Lead</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Teaching an Executive a Skill" tabindex="0" role="button" aria-expanded="false"><td><b>Teaching an Executive a Skill</b><br><span style="color:var(--muted);font-size:13px">Give an executive a capability it did not have — a way of doing one thing properly, written down once and used the same…</span></td><td>Workflow Architect</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Where Every Fact Lives" tabindex="0" role="button" aria-expanded="false"><td><b>Where Every Fact Lives</b><br><span style="color:var(--muted);font-size:13px">One home per fact, and a written rule for which home. This is not really a sequence of steps — it is the rule the other…</span></td><td>AI Operations Lead</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr><tr data-flow="Writing a Workflow Down" tabindex="0" role="button" aria-expanded="false"><td><b>Writing a Workflow Down</b><br><span style="color:var(--muted);font-size:13px">Turn something people do from memory into a note a machine can read and a colleague can follow. This is the workflow…</span></td><td>Workflow Architect</td><td><span class="pill">note is a draft</span></td><td><span class="pill good">running</span></td></tr><tr class="detail" hidden><td colspan="4"><div class="flowbox"></div></td></tr></tbody></table></div></div></section>
+<!-- BEGIN the steps — edit this list and the step diagrams redraw themselves -->
+<script type="application/json" id="flow-data">{
+ "roles": [
+  "AI Operations Lead",
+  "Chief of Staff",
+  "Workflow Architect"
+ ],
+ "flows": {
+  "Adding a Specialist": {
+   "owner": "Workflow Architect",
+   "done": "A role note with kind: specialist exists, reports to an executive, is compiled into an agent, and appears under that executive on the organization page.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "Name the one job",
+     "who": "You",
+     "needs": "The thing that keeps going wrong",
+     "out": "A job narrow enough to describe in a sentence"
+    },
+    {
+     "n": "2",
+     "step": "Check it is not a department",
+     "who": "You",
+     "needs": "Judgement",
+     "out": "If it has several kinds of work in it, it is a department"
+    },
+    {
+     "n": "3",
+     "step": "Write the role note",
+     "who": "Workflow Architect",
+     "needs": "_Templates/Specialist.md",
+     "out": "kind: specialist, reports_to: its executive, department: the one it works in"
+    },
+    {
+     "n": "4",
+     "step": "Say where it stops",
+     "who": "Workflow Architect",
+     "needs": "Step 1",
+     "out": "The not_owned list — the part that makes its answers worth having"
+    },
+    {
+     "n": "5",
+     "step": "Compile and rebuild",
+     "who": "Workflow Architect",
+     "needs": "The generators",
+     "out": "An agent, and a dashed box under its executive on the chart"
+    }
+   ]
+  },
+  "Changing How You Work": {
+   "owner": "Chief of Staff",
+   "done": "The one note that owns the fact is edited, the installer has run, the check is green, and one line records what changed and why.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "Say what changed, in plain words",
+     "who": "You",
+     "needs": "—",
+     "out": "Intent"
+    },
+    {
+     "n": "2",
+     "step": "Find the **one** note that owns it",
+     "who": "Chief of Staff",
+     "needs": "The contract's routing table",
+     "out": "A single target"
+    },
+    {
+     "n": "3",
+     "step": "Edit that note, and only that note",
+     "who": "Chief of Staff",
+     "needs": "—",
+     "out": "A changed source"
+    },
+    {
+     "n": "4",
+     "step": "Run the installer",
+     "who": "Agent or you",
+     "needs": "Python",
+     "out": "Everything downstream agrees"
+    },
+    {
+     "n": "5",
+     "step": "Check, then log one line",
+     "who": "Chief of Staff",
+     "needs": "—",
+     "out": "A green check and a record"
+    }
+   ]
+  },
+  "Keeping the Picture True": {
+   "owner": "AI Operations Lead",
+   "done": "Every generator has run against the current notes, the check reports zero failures, and the page you are looking at is the one that was just built.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "Change the one note that owns the fact",
+     "who": "Anyone",
+     "needs": "To know which note that is",
+     "out": "A changed source"
+    },
+    {
+     "n": "2",
+     "step": "Run the generators",
+     "who": "Agent or you",
+     "needs": "Python",
+     "out": "A rebuilt register and page"
+    },
+    {
+     "n": "3",
+     "step": "Run the check",
+     "who": "Agent or you",
+     "needs": "—",
+     "out": "Zero failures, or a named untruth"
+    },
+    {
+     "n": "4",
+     "step": "Fix the **note**, not the output",
+     "who": "Agent or you",
+     "needs": "The failure message",
+     "out": "A true source"
+    },
+    {
+     "n": "5",
+     "step": "Look at the page",
+     "who": "You",
+     "needs": "—",
+     "out": "Confidence it is current"
+    }
+   ]
+  },
+  "Making a Decision": {
+   "owner": "Chief of Staff",
+   "done": "A decision record exists, a person set it to decided with their name on it, and what follows from it is written down.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "Name the question in one sentence",
+     "who": "Chief of Staff",
+     "needs": "The conversation",
+     "out": "A record at proposed"
+    },
+    {
+     "n": "2",
+     "step": "List the options honestly, including doing nothing",
+     "who": "Chief of Staff",
+     "needs": "Evidence, tagged [F]/[A]/[R]",
+     "out": "A comparison"
+    },
+    {
+     "n": "3",
+     "step": "Decide",
+     "who": "You",
+     "needs": "The record",
+     "out": "decided, decided_by, a date"
+    },
+    {
+     "n": "4",
+     "step": "Write what follows",
+     "who": "Chief of Staff",
+     "needs": "The decision",
+     "out": "Owned consequences"
+    },
+    {
+     "n": "5",
+     "step": "Set a review date",
+     "who": "You",
+     "needs": "Judgement",
+     "out": "review_on"
+    }
+   ]
+  },
+  "Running Your Week": {
+   "owner": "Chief of Staff",
+   "done": "A weekly note exists with what actually finished, every stale thing disposed of, at most five things named for next week, and one line of what you learned — or an honest blank.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "Gather what finished",
+     "who": "Chief of Staff",
+     "needs": "The week's daily notes and changed notes",
+     "out": "A list, not a feeling"
+    },
+    {
+     "n": "2",
+     "step": "Find everything stale past three weeks",
+     "who": "Chief of Staff",
+     "needs": "status and updated on every note",
+     "out": "The rot list"
+    },
+    {
+     "n": "3",
+     "step": "Name what is waiting on a person",
+     "who": "Chief of Staff",
+     "needs": "The picture",
+     "out": "Each one with its cost of silence"
+    },
+    {
+     "n": "4",
+     "step": "**Dispose of every stale thing**",
+     "who": "You",
+     "needs": "Step 2",
+     "out": "Promote, archive or drop — nothing survives untouched"
+    },
+    {
+     "n": "5",
+     "step": "Name at most five things for next week",
+     "who": "You",
+     "needs": "Judgement",
+     "out": "A week somebody could actually have"
+    },
+    {
+     "n": "6",
+     "step": "Write the note, rebuild, check",
+     "who": "Chief of Staff",
+     "needs": "The template",
+     "out": "A weekly record and a true picture"
+    }
+   ]
+  },
+  "Setting Up a Department": {
+   "owner": "Chief of Staff",
+   "done": "A department note exists, one executive role points at it, the agent is compiled, and the check is green.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "List the parts of your own job, or of the organisation",
+     "who": "You",
+     "needs": "Nothing but your own words",
+     "out": "Three to six names — not twelve"
+    },
+    {
+     "n": "2",
+     "step": "Write one note per department",
+     "who": "Chief of Staff",
+     "needs": "_Templates/Department.md",
+     "out": "What it owns, **where it stops**, and one sentence for *working*"
+    },
+    {
+     "n": "3",
+     "step": "Check the boundaries",
+     "who": "You",
+     "needs": "The notes",
+     "out": "Two people would file the same thing in the same place"
+    },
+    {
+     "n": "4",
+     "step": "Give each one an executive",
+     "who": "Chief of Staff",
+     "needs": "01 - Company/Roles/Chief of Staff.md as the shape",
+     "out": "One role note per department, department: filled in"
+    },
+    {
+     "n": "5",
+     "step": "Compile and rebuild",
+     "who": "Chief of Staff",
+     "needs": "The generators",
+     "out": "An agent per executive, and a picture that shows the layer"
+    },
+    {
+     "n": "6",
+     "step": "Run the check",
+     "who": "Chief of Staff",
+     "needs": "—",
+     "out": "Green, or a named reason it is not"
+    }
+   ]
+  },
+  "Setting Up a Project": {
+   "owner": "Chief of Staff",
+   "done": "A project note exists with an outcome, an owner, what is out of scope, and how you will know it is done.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "State the outcome, not the activity",
+     "who": "Chief of Staff",
+     "needs": "The ask",
+     "out": "\"X can do Y\" rather than \"build Y\""
+    },
+    {
+     "n": "2",
+     "step": "Name what is out of scope",
+     "who": "Chief of Staff",
+     "needs": "Judgement",
+     "out": "A boundary that stops scope creep"
+    },
+    {
+     "n": "3",
+     "step": "Decide whether it is worth doing now",
+     "who": "You",
+     "needs": "Steps 1–2",
+     "out": "Yes, or written down and not started"
+    },
+    {
+     "n": "4",
+     "step": "Write the project note",
+     "who": "Chief of Staff",
+     "needs": "The template",
+     "out": "A note with an owner"
+    },
+    {
+     "n": "5",
+     "step": "Break it into startable pieces",
+     "who": "Chief of Staff",
+     "needs": "The note",
+     "out": "Work somebody could begin Monday"
+    },
+    {
+     "n": "6",
+     "step": "Put the pieces on the board",
+     "who": "—",
+     "needs": "**The Board package**",
+     "out": "Not in the base"
+    }
+   ]
+  },
+  "Teaching an Executive a Skill": {
+   "owner": "Workflow Architect",
+   "done": "A skill exists in .claude/skills/, names its executive in owner:, appears on the Skills page, and somebody has used it once.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "Say what you keep repeating",
+     "who": "You",
+     "needs": "Your own words",
+     "out": "The method, out loud"
+    },
+    {
+     "n": "2",
+     "step": "Write it as a skill",
+     "who": "Workflow Architect",
+     "needs": "_Templates/Skill.md",
+     "out": ".claude/skills/{name}/SKILL.md"
+    },
+    {
+     "n": "3",
+     "step": "Say when it applies",
+     "who": "Workflow Architect",
+     "needs": "Step 1",
+     "out": "A description concrete enough to trigger on"
+    },
+    {
+     "n": "4",
+     "step": "Set owner: to its executive",
+     "who": "Workflow Architect",
+     "needs": "A name or a job title",
+     "out": "It appears under that executive in the catalog"
+    },
+    {
+     "n": "5",
+     "step": "Use it on something real",
+     "who": "You",
+     "needs": "A live case",
+     "out": "Proof, or a list of what it got wrong"
+    },
+    {
+     "n": "6",
+     "step": "Fix what the case showed",
+     "who": "Workflow Architect",
+     "needs": "Step 5",
+     "out": "A skill that survived contact"
+    }
+   ]
+  },
+  "Where Every Fact Lives": {
+   "owner": "AI Operations Lead",
+   "done": "The fact is in exactly one note, and anyone could find it without asking.",
+   "steps": []
+  },
+  "Writing a Workflow Down": {
+   "owner": "Workflow Architect",
+   "done": "A note exists from the template, its diagram shows the current state including the ugly parts, its exceptions are listed, and its two marks are set honestly.",
+   "steps": [
+    {
+     "n": "1",
+     "step": "Describe it out loud, badly",
+     "who": "Whoever does the work",
+     "needs": "Nothing",
+     "out": "A messy account"
+    },
+    {
+     "n": "2",
+     "step": "Ask the five questions",
+     "who": "Workflow Architect",
+     "needs": "The account",
+     "out": "Gaps named"
+    },
+    {
+     "n": "3",
+     "step": "Write the note from the template",
+     "who": "Workflow Architect",
+     "needs": "The template",
+     "out": "A draft note"
+    },
+    {
+     "n": "4",
+     "step": "Set readiness from evidence",
+     "who": "Workflow Architect",
+     "needs": "Honesty",
+     "out": "not-yet · partly · ready"
+    },
+    {
+     "n": "5",
+     "step": "Walk a real case through it",
+     "who": "A person",
+     "needs": "One real case, one exception",
+     "out": "Corrections"
+    },
+    {
+     "n": "6",
+     "step": "Set doc_status: validated with the date",
+     "who": "A person",
+     "needs": "Step 5 done",
+     "out": "A note that is true"
+    }
+   ]
+  }
+ }
+}</script>
+<!-- END the steps -->
+<script>
+(function(){
+  var el=document.getElementById('flow-data'); if(!el) return;
+  var d=JSON.parse(el.textContent||el.innerText), flows=d.flows||{}, people=d.roles||[];
+  function esc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function draw(key){
+    var f=flows[key];
+    if(!f) return '<p class="empty">Nothing to draw for this one.</p>';
+    if(!f.steps||!f.steps.length)
+      return '<p class="empty">This note has no step table yet, so there is nothing to draw. '+
+             'Ask for <b>Writing a Workflow Down</b> and the steps get written properly.</p>';
+    var h='<ol class="flow">';
+    f.steps.forEach(function(s){
+      var agent = people.indexOf(String(s.who||'').trim())>=0;
+      h+='<li class="'+(agent?'agent':'person')+'"><span class="fnum">'+esc(s.n)+'</span><div class="fbody"><b>'+esc(s.step)+'</b>';
+      if(s.who) h+='<span class="fwho">'+esc(s.who)+'</span>';
+      if(s.needs||s.out) h+='<span class="fio">'+esc(s.needs||'—')+'  →  '+esc(s.out||'—')+'</span>';
+      h+='</div></li>';
+    });
+    if(f.done) h+='<li class="done"><span class="fnum">✓</span><div class="fbody"><b>Done means</b><span class="fio">'+esc(f.done)+'</span></div></li>';
+    h+='</ol>';
+    h+='<p class="flowlegend">Read from this workflow’s own step table. A filled number is a step an '+
+       'agent can take; an outlined one waits on a person.'+(f.owner?' Owner: <b>'+esc(f.owner)+'</b>.':'')+'</p>';
+    return h;
+  }
+  function toggle(tr){
+    var det=tr.nextElementSibling;
+    if(!det||det.className.indexOf('detail')<0) return;
+    if(det.hasAttribute('hidden')){
+      if(!det.getAttribute('data-drawn')){
+        det.getElementsByClassName('flowbox')[0].innerHTML=draw(tr.getAttribute('data-flow'));
+        det.setAttribute('data-drawn','1');
+      }
+      det.removeAttribute('hidden'); tr.className='open'; tr.setAttribute('aria-expanded','true');
+    } else {
+      det.setAttribute('hidden',''); tr.className=''; tr.setAttribute('aria-expanded','false');
+    }
+  }
+  function rowOf(n){ while(n&&n.nodeName!=='TR'){ n=n.parentNode; } return (n&&n.getAttribute&&n.getAttribute('data-flow'))?n:null; }
+  document.addEventListener('click',function(e){ var tr=rowOf(e.target); if(tr) toggle(tr); });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ') return;
+    var tr=rowOf(e.target); if(tr){ e.preventDefault(); toggle(tr); }
+  });
+})();
+</script>
 <footer>Generated from the notes by <code>build_picture.py</code> — a view, never a second source of
 truth. Edit the note that owns the fact and build again. · AI Operations Framework, MeshPro × Expectus</footer>
 </div></body></html>

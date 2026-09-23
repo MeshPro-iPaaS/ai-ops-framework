@@ -62,10 +62,41 @@ tr:last-child td{border-bottom:0}
 .chart{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:22px 18px;overflow-x:auto}
 .chart svg{display:block;margin:0 auto}
 .legend{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center}
+.skill{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px}
+.skill h3{margin:0;font-size:16px}
+.skill .slug{font:400 11.5px/1 var(--fm);color:var(--muted);margin-top:4px;display:block}
+.skill p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.skill .stop{margin-top:11px;padding-top:9px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.skill.orphan{border-style:dashed}
+tr[data-flow]{cursor:pointer}
+tr[data-flow] td:first-child b{position:relative;padding-left:16px;display:inline-block}
+tr[data-flow] td:first-child b::before{content:"";position:absolute;left:0;top:5px;width:0;height:0;
+ border:5px solid transparent;border-left-color:var(--accent);transition:transform .12s;
+ transform-origin:3px 5px}
+tr[data-flow].open td:first-child b::before{transform:rotate(90deg)}
+tr[data-flow]:hover td{background:var(--accent-soft)}
+tr.detail>td{padding:0 0 18px;border-bottom:1px solid var(--rule)}
+.flowbox{padding:4px 0 0}
+ol.flow{list-style:none;margin:6px 0 0;padding:0 0 0 4px}
+ol.flow li{position:relative;padding:0 0 16px 44px;min-height:30px}
+ol.flow li::before{content:"";position:absolute;left:13px;top:26px;bottom:-4px;width:2px;background:var(--rule)}
+ol.flow li:last-child::before{display:none}
+.fnum{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;display:flex;
+ align-items:center;justify-content:center;font:600 12.5px/1 var(--fm);background:var(--accent-soft);
+ color:var(--accent);border:1px solid var(--accent)}
+li.person .fnum{background:transparent;color:var(--muted);border-color:var(--muted)}
+li.done .fnum{background:transparent;color:var(--good);border-color:var(--good)}
+.fbody b{display:block;font-size:14.5px;line-height:1.35}
+.fwho{display:inline-block;margin-top:3px;font:400 11.5px/1 var(--fm);text-transform:uppercase;
+ letter-spacing:.07em;color:var(--accent)}
+li.person .fwho{color:var(--muted)}
+.fio{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+.flowlegend{margin:14px 0 0;font-size:12.5px;color:var(--muted)}
 footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
-@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}}
+@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}
+ tr.detail>td{display:table-cell}[hidden]{display:revert!important}}
 </style></head><body>
-<nav><div class="in"><a href="ai_operations.html" class=on>Dashboard</a><a href="agents.html">Agent organization</a><a href="workflows.html">Workflows</a><a href="projects.html">Projects</a></div></nav>
+<nav><div class="in"><a href="ai_operations.html" class=on>Dashboard</a><a href="agents.html">Agent organization</a><a href="skills.html">Skills</a><a href="workflows.html">Workflows</a><a href="projects.html">Projects</a></div></nav>
 <div class="wrap">
 <div class="top"><h1>What needs you, and how it is running</h1><span class="stamp">built 2026-09-23 · <span class="pill warn">never run</span></span></div>
 
@@ -79,6 +110,7 @@ footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-si
   <div class="stat"><b>2</b><span>departments</span></div>
   <div class="stat"><b>3</b><span>executives</span></div>
   <div class="stat"><b>0</b><span>specialists</span></div>
+  <div class="stat"><b>3</b><span>skills</span></div>
   <div class="stat"><b>10</b><span>workflows written down</span></div>
   <div class="stat"><b>8</b><span>running end to end</span></div>
   <div class="stat"><b>0</b><span>projects</span></div>
@@ -89,8 +121,10 @@ footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-si
 <div class="grid">
   <div class="card"><h3><a href="agents.html">Agent organization</a></h3>
     <p>Who answers for what, drawn from the role notes. Add a department with an executive and it redraws itself.</p></div>
+  <div class="card"><h3><a href="skills.html">Skills</a></h3>
+    <p>What each executive knows how to do, read from the skill folder. Teach one and it appears here.</p></div>
   <div class="card"><h3><a href="workflows.html">Workflows</a></h3>
-    <p>Every workflow in its department block, with two marks each: is the note true, and does it run.</p></div>
+    <p>Every workflow in its department block, with two marks each. Click one to see its steps drawn.</p></div>
   <div class="card"><h3><a href="projects.html">Projects</a></h3>
     <p>What is actually being worked on, who owns it, and what is late.</p></div>
 </div></section>

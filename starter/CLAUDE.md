@@ -58,9 +58,15 @@ A blank field cannot be told apart from a forgotten one, so the check refuses it
 | Something you have not filed yet | `00 - Inbox/` | — |
 
 Generated, never edited by hand: `01 - Company/Workflows/Workflows.md` (the register),
-`05 - Operations/picture/` — a four-page site: **`ai_operations.html`** (the dashboard you open first),
-`agents.html` (who answers for what), `workflows.html` (every workflow in its department block) and
+`05 - Operations/picture/` — a five-page site: **`ai_operations.html`** (the dashboard you open first),
+`agents.html` (who answers for what), `skills.html` (what each executive knows how to do),
+`workflows.html` (every workflow in its department block, each one clickable for its steps) and
 `projects.html` (the work in flight) — and `.claude/agents/` (the compiled roles).
+
+A skill lives at `.claude/skills/{name}/SKILL.md` and carries `owner:` — the name **or the job title**
+of the executive that reaches for it. Either resolves, so renaming the executives never orphans a
+skill. A skill with no owner appears on the site under *Nobody reaches for these*, and the check
+fails.
 
 ## Frontmatter
 

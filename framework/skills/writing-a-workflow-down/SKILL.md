@@ -1,6 +1,8 @@
 ---
 name: writing-a-workflow-down
 description: Use when someone says "how do we do X", "write this down", "map this process", asks for a step table or exceptions, or does the same thing for the second time. Turns how work actually happens into a workflow note from the template — current state first, exceptions included, both marks set honestly. Never marks a workflow validated; only a person who walked a real case may.
+owner: Workflow Architect
+department: AI Operations
 ---
 
 # Writing a workflow down
