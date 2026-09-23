@@ -137,91 +137,90 @@ def dept_key(d):
 
 
 # ---------------------------------------------------------------- the hierarchy
-BW, BH, HGAP, VGAP = 178, 58, 22, 48
+# The chart is drawn by the page, from a block of data the page carries. That is deliberate: plenty of
+# machines cannot run these generators at all, and on those a session has to keep the site true by hand.
+# Rewriting five lines of JSON is something a session does reliably; recomputing SVG coordinates is not.
+ORG_JS = """
+(function(){
+  var el=document.getElementById('org-data'); if(!el) return;
+  var data=JSON.parse(el.textContent||el.innerText), ROOT='You';
+  var BW=178,BH=58,HG=22,VG=48;
+  var named={}; data.forEach(function(r){ if(r&&r.name) named[r.name]=r; });
+  var kids={};
+  Object.keys(named).sort().forEach(function(n){
+    var p=(named[n].reports_to||'').toString().trim();
+    var key=(named[p]&&p!==n)?p:ROOT;
+    (kids[key]=kids[key]||[]).push(n);
+  });
+  var pos={},seen={},cursor=0,maxd=0;
+  function place(node,d){
+    if(seen[node]) return null;
+    seen[node]=1; if(d>maxd) maxd=d;
+    var ch=(kids[node]||[]).filter(function(c){return !seen[c];}), x;
+    if(!ch.length){ x=cursor; cursor+=BW+HG; }
+    else{
+      var xs=ch.map(function(c){return place(c,d+1);}).filter(function(v){return v!==null;});
+      if(xs.length){ x=(Math.min.apply(null,xs)+Math.max.apply(null,xs))/2; }
+      else { x=cursor; cursor+=BW+HG; }
+    }
+    pos[node]=[x,d*(BH+VG)];
+    return x;
+  }
+  place(ROOT,0);
+  Object.keys(named).forEach(function(n){
+    if(!(n in pos)){ pos[n]=[cursor,(maxd+1)*(BH+VG)]; cursor+=BW+HG; }
+  });
+  var W=Math.max(cursor-HG,BW), H=(maxd+1)*BH+maxd*VG, out=[];
+  function line(d){ out.push('<path d="'+d+'" stroke="var(--rule)" fill="none" stroke-width="1.5"/>'); }
+  Object.keys(kids).forEach(function(parent){
+    if(!(parent in pos)) return;
+    var drawn=kids[parent].filter(function(c){return c in pos;});
+    if(!drawn.length) return;
+    var px=pos[parent][0], py=pos[parent][1], cy=py+BH, mid=cy+VG/2;
+    line('M'+(px+BW/2)+' '+cy+' V'+mid);
+    var xs=drawn.map(function(c){return pos[c][0]+BW/2;});
+    if(drawn.length>1) line('M'+Math.min.apply(null,xs)+' '+mid+' H'+Math.max.apply(null,xs));
+    drawn.forEach(function(c){ line('M'+(pos[c][0]+BW/2)+' '+mid+' V'+pos[c][1]); });
+  });
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function clip(t,n){ t=String(t||''); return t.length<=n?t:t.slice(0,n).replace(/\s+\S*$/,'')+'\u2026'; }
+  Object.keys(pos).forEach(function(node){
+    var x=pos[node][0], y=pos[node][1];
+    if(node===ROOT){
+      out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--ink)"/>');
+      out.push('<text x="'+(x+BW/2)+'" y="'+(y+BH/2+5)+'" text-anchor="middle" font-size="15" font-weight="600" fill="var(--panel)">You</text>');
+      return;
+    }
+    var r=named[node]||{}, sub=r.department||'across all departments';
+    out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.4"/>');
+    out.push('<text x="'+(x+BW/2)+'" y="'+(y+24)+'" text-anchor="middle" font-size="14.5" font-weight="600" fill="var(--ink)">'+esc(clip(node,22))+'</text>');
+    out.push('<text x="'+(x+BW/2)+'" y="'+(y+42)+'" text-anchor="middle" font-family="var(--fm)" font-size="11" fill="var(--muted)">'+esc(clip(sub,26))+'</text>');
+  });
+  document.getElementById('org-chart').innerHTML =
+    '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:'+W+'px;height:auto" '+
+    'font-family="var(--fs)" role="img" aria-label="The executive hierarchy">'+out.join('')+'</svg>';
+})();
+"""
 
 
-def tree_svg(roles):
-    """Lay the executives out from what each role says about itself.
+def org_block(roles):
+    """The hierarchy as data plus the few lines that draw it.
 
-    The shape comes from `reports_to`; anything reporting to nobody hangs off you. There is no diagram
-    to maintain — add a department with an executive and the next build draws it.
+    A session with no way to run these generators keeps the chart true by editing the JSON between the
+    markers below — name, title, department, reports_to — and the page redraws itself. Nothing else on
+    the page needs touching, and there are no coordinates to get wrong.
     """
-    named = {}
-    for r in roles:
-        named[(r.get("name") or r["_name"]).strip()] = r
-    ROOT = "You"
-    kids, seen = {}, set()
-    for n, r in sorted(named.items()):
-        p = (r.get("reports_to") or "").strip()
-        kids.setdefault(p if (p in named and p != n) else ROOT, []).append(n)
-
-    pos, cursor, depth_max = {}, [0], [0]
-
-    def place(node, depth):
-        if node in seen:                      # a role that reports to something reporting to it
-            return None
-        seen.add(node)
-        depth_max[0] = max(depth_max[0], depth)
-        ch = [c for c in kids.get(node, []) if c not in seen]
-        if not ch:
-            x = cursor[0]
-            cursor[0] += BW + HGAP
-        else:
-            xs = [place(c, depth + 1) for c in ch]
-            xs = [x for x in xs if x is not None]
-            x = (min(xs) + max(xs)) / 2 if xs else cursor[0]
-            if not xs:
-                cursor[0] += BW + HGAP
-        pos[node] = (x, depth * (BH + VGAP))
-        return x
-
-    place(ROOT, 0)
-    for n in named:                            # anything a cycle left out still gets drawn
-        if n not in pos:
-            pos[n] = (cursor[0], (depth_max[0] + 1) * (BH + VGAP))
-            cursor[0] += BW + HGAP
-            depth_max[0] += 0
-
-    W = max(cursor[0] - HGAP, BW)
-    H = (depth_max[0] + 1) * BH + depth_max[0] * VGAP
-
-    out = []
-    for parent, ch in kids.items():
-        if parent not in pos:
-            continue
-        px, py = pos[parent]
-        drawn = [c for c in ch if c in pos]
-        if not drawn:
-            continue
-        cy = py + BH
-        mid = cy + VGAP / 2
-        out.append(f'<path d="M{px + BW/2:.1f} {cy} V{mid:.1f}" stroke="var(--rule)" fill="none" stroke-width="1.5"/>')
-        xs = [pos[c][0] + BW / 2 for c in drawn]
-        if len(drawn) > 1:
-            out.append(f'<path d="M{min(xs):.1f} {mid:.1f} H{max(xs):.1f}" stroke="var(--rule)" '
-                       f'fill="none" stroke-width="1.5"/>')
-        for c in drawn:
-            cxx, cyy = pos[c]
-            out.append(f'<path d="M{cxx + BW/2:.1f} {mid:.1f} V{cyy:.1f}" stroke="var(--rule)" '
-                       f'fill="none" stroke-width="1.5"/>')
-
-    for node, (x, y) in pos.items():
-        if node == ROOT:
-            out.append(f'<rect x="{x:.1f}" y="{y}" width="{BW}" height="{BH}" rx="6" fill="var(--ink)"/>')
-            out.append(f'<text x="{x + BW/2:.1f}" y="{y + BH/2 + 5}" text-anchor="middle" '
-                       f'font-family="var(--fs)" font-size="15" font-weight="600" fill="var(--panel)">You</text>')
-            continue
-        r = named[node]
-        sub = r.get("department") or "across all departments"
-        out.append(f'<rect x="{x:.1f}" y="{y}" width="{BW}" height="{BH}" rx="6" fill="var(--panel)" '
-                   f'stroke="var(--accent)" stroke-width="1.4"/>')
-        out.append(f'<text x="{x + BW/2:.1f}" y="{y + 24}" text-anchor="middle" font-family="var(--fs)" '
-                   f'font-size="14.5" font-weight="600" fill="var(--ink)">{E(clip(node, 22))}</text>')
-        out.append(f'<text x="{x + BW/2:.1f}" y="{y + 42}" text-anchor="middle" font-family="var(--fm)" '
-                   f'font-size="11" fill="var(--muted)">{E(clip(sub, 26))}</text>')
-
-    return (f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" style="max-width:{W:.0f}px;height:auto" '
-            f'role="img" aria-label="The executive hierarchy">' + "".join(out) + "</svg>")
+    data = [{"name": (r.get("name") or r["_name"]),
+             "title": r.get("title") or "",
+             "department": r.get("department") or "",
+             "reports_to": r.get("reports_to") or "",
+             "authority": r.get("authority") or ""} for r in roles]
+    blob = json.dumps(data, ensure_ascii=False, indent=1).replace("</", "<\\/")
+    return ('<!-- BEGIN the hierarchy — edit this list and the chart redraws itself -->\n'
+            f'<script type="application/json" id="org-data">{blob}</script>\n'
+            '<!-- END the hierarchy -->\n'
+            '<div id="org-chart"></div>\n'
+            f'<script>{ORG_JS}</script>')
 
 
 # ---------------------------------------------------------------- the build
@@ -365,7 +364,7 @@ def build(root):
 <section><h2>The hierarchy</h2>
 <p class="sub">Read from each role's own note — who it reports to, and which department it answers for.
 There is no diagram to maintain: add a department and an executive, rebuild, and it appears here.</p>
-<div class="chart">{tree_svg(roles)}</div>
+<div class="chart">{org_block(roles)}</div>
 <p class="legend">{len(roles)} executives · {len(depts)} departments · one executive per department</p></section>
 
 <section><h2>What each of them may do</h2>
