@@ -144,7 +144,7 @@ ORG_JS = """
 (function(){
   var el=document.getElementById('org-data'); if(!el) return;
   var data=JSON.parse(el.textContent||el.innerText), ROOT='You';
-  var BW=178,BH=58,HG=22,VG=48;
+  var BW=188,BH=58,HG=22,VG=48;
   var named={}; data.forEach(function(r){ if(r&&r.name) named[r.name]=r; });
   var kids={};
   Object.keys(named).sort().forEach(function(n){
@@ -192,7 +192,7 @@ ORG_JS = """
       return;
     }
     var r=named[node]||{}, spec=(r.kind==='specialist');
-    var sub=spec?('specialist'+(r.department?' \u00b7 '+r.department:'')):(r.department||'across all departments');
+    var sub=spec?(r.department||'specialist'):(r.department||'across all departments');
     out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--panel)" stroke="'+
              (spec?'var(--rule)':'var(--accent)')+'" stroke-width="'+(spec?1:1.4)+'"'+
              (spec?' stroke-dasharray="4 3"':'')+'/>');
@@ -413,7 +413,11 @@ is the last one on each card — where that executive stops.</p>
         name = d.get("name") or d["_name"]
         mine = flows_of(name)
         placed.update(id(w) for w in mine)
-        lead = ", ".join(E(r.get("name", r["_name"])) for r in execs_of(name)) or "no executive yet"
+        heads = [r for r in execs_of(name) if is_exec(r)]
+        helpers = [r for r in execs_of(name) if not is_exec(r)]
+        lead = ", ".join(E(r.get("name", r["_name"])) for r in heads) or "no executive yet"
+        if helpers:
+            lead += f' +{len(helpers)} specialist' + ("" if len(helpers) == 1 else "s")
         r = sum(1 for w in mine if w.get("readiness") == "ready")
         blocks += (f'<div class="deptblock"><div class="hd"><h3>{E(name)}</h3>'
                    f'<span class="led">{lead} · {len(mine)} workflow{"" if len(mine)==1 else "s"}'

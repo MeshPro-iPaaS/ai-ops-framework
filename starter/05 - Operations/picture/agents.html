@@ -153,7 +153,7 @@ There is no diagram to maintain: add a department and an executive, rebuild, and
       return;
     }
     var r=named[node]||{}, spec=(r.kind==='specialist');
-    var sub=spec?('specialist'+(r.department?' · '+r.department:'')):(r.department||'across all departments');
+    var sub=spec?(r.department||'specialist'):(r.department||'across all departments');
     out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--panel)" stroke="'+
              (spec?'var(--rule)':'var(--accent)')+'" stroke-width="'+(spec?1:1.4)+'"'+
              (spec?' stroke-dasharray="4 3"':'')+'/>');

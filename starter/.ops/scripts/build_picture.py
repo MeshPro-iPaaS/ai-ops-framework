@@ -192,7 +192,7 @@ ORG_JS = """
       return;
     }
     var r=named[node]||{}, spec=(r.kind==='specialist');
-    var sub=spec?('specialist'+(r.department?' \u00b7 '+r.department:'')):(r.department||'across all departments');
+    var sub=spec?(r.department||'specialist'):(r.department||'across all departments');
     out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--panel)" stroke="'+
              (spec?'var(--rule)':'var(--accent)')+'" stroke-width="'+(spec?1:1.4)+'"'+
              (spec?' stroke-dasharray="4 3"':'')+'/>');
