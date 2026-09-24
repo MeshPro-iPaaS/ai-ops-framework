@@ -232,6 +232,11 @@ def main(vault, names=None):
     for f in sorted(os.listdir(os.path.join(FW, "scripts"))):
         if f.endswith(".py"):
             shutil.copy2(os.path.join(FW, "scripts", f), os.path.join(ops, f))
+    # the opt-in helper that turns the machinery on where there is no Python — it has to travel with
+    # the vault, because the vault is often all the person has
+    opsdir = os.path.join(vault, ".ops")
+    for f in sorted(os.listdir(os.path.join(FW, "ops"))) if os.path.isdir(os.path.join(FW, "ops")) else []:
+        shutil.copy2(os.path.join(FW, "ops", f), os.path.join(opsdir, f))
     say(5, f"{len(os.listdir(os.path.join(FW,'skills')))} skills and "
            f"{len([f for f in os.listdir(ops) if f.endswith('.py')])} scripts installed")
 

@@ -1,0 +1,208 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent organization</title><style>
+:root{--bg:#F4F5F6;--panel:#FFF;--ink:#14181C;--muted:#5B6672;--rule:#DCE0E4;--accent:#5B4FD1;
+ --accent-soft:#ECEAFB;--warn:#8A5A12;--warn-soft:#F6EEDD;--good:#2F6B43;
+ --fs:"Segoe UI",system-ui,-apple-system,sans-serif;--fm:"Cascadia Mono",ui-monospace,Consolas,monospace}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121518;--panel:#191D21;--ink:#E7EBEE;
+ --muted:#96A0AA;--rule:#2A3037;--accent:#A59CFF;--accent-soft:#232043;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}}
+:root[data-theme=dark]{--bg:#121518;--panel:#191D21;--ink:#E7EBEE;--muted:#96A0AA;--rule:#2A3037;
+ --accent:#A59CFF;--accent-soft:#232043;--warn:#D8A54A;--warn-soft:#2C2416;--good:#6FBF8B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--fs)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px 56px}
+nav{border-bottom:1px solid var(--rule);background:var(--panel);position:sticky;top:0;z-index:5}
+nav .in{max-width:1040px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:2px;align-items:center}
+nav a{display:inline-block;padding:14px 14px 11px;font-size:14px;text-decoration:none;color:var(--muted);
+ border-bottom:3px solid transparent}
+nav a:hover{color:var(--ink)}
+nav a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;
+ border-bottom:2px solid var(--ink);padding:36px 0 14px}
+h1{font-size:26px;margin:0;letter-spacing:-.01em}
+.stamp{font:400 12px/1 var(--fm);color:var(--muted)}
+section{margin-top:34px}
+h2{font-size:19px;margin:0 0 4px}
+.sub{font-size:13px;color:var(--muted);margin:0 0 16px;max-width:70ch}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px}
+.card h3{margin:0 0 2px;font-size:16px}
+.card .who{font:400 12px/1 var(--fm);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.card p{margin:10px 0 0;font-size:14px;color:var(--muted)}
+.card ul{margin:10px 0 0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+.wait{background:var(--warn-soft);border:1px solid var(--warn);border-radius:4px;padding:16px 18px}
+.wait ul{margin:0;padding-left:0;list-style:none}
+.wait li{padding:9px 0;border-top:1px solid var(--rule);font-size:14.5px}
+.wait li:first-child{border-top:0}
+.wait .why{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.none{color:var(--good);font-size:14.5px;margin:0}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:620px}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:4px 16px}
+th{text-align:left;font:500 11px/1.3 var(--fm);letter-spacing:.09em;text-transform:uppercase;
+ white-space:nowrap;color:var(--muted);padding:12px 14px 8px 0;border-bottom:1px solid var(--rule)}
+td{padding:11px 14px 11px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font:500 11.5px/1 var(--fm);padding:4px 8px;border-radius:3px;
+ background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.good{background:transparent;color:var(--good);border:1px solid var(--good)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--rule);
+ border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.stat{background:var(--panel);padding:14px 16px}
+.stat b{display:block;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.deptblock{margin-top:26px}
+.deptblock .hd{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between;
+ border-bottom:1px solid var(--rule);padding-bottom:7px;margin-bottom:12px}
+.deptblock .hd h3{margin:0;font-size:17px}
+.deptblock .hd .led{font:400 12px/1 var(--fm);color:var(--accent);text-transform:uppercase;letter-spacing:.07em}
+.empty{color:var(--muted);font-size:14px;font-style:italic;padding:6px 0}
+.chart{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:22px 18px;overflow-x:auto}
+.chart svg{display:block;margin:0 auto}
+.legend{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center}
+.skill{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:16px 18px}
+.skill h3{margin:0;font-size:16px}
+.skill .slug{font:400 11.5px/1 var(--fm);color:var(--muted);margin-top:4px;display:block}
+.skill p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.skill .stop{margin-top:11px;padding-top:9px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.skill.orphan{border-style:dashed}
+tr[data-flow]{cursor:pointer}
+tr[data-flow] td:first-child b{position:relative;padding-left:16px;display:inline-block}
+tr[data-flow] td:first-child b::before{content:"";position:absolute;left:0;top:5px;width:0;height:0;
+ border:5px solid transparent;border-left-color:var(--accent);transition:transform .12s;
+ transform-origin:3px 5px}
+tr[data-flow].open td:first-child b::before{transform:rotate(90deg)}
+tr[data-flow]:hover td{background:var(--accent-soft)}
+tr.detail>td{padding:0 0 18px;border-bottom:1px solid var(--rule)}
+.flowbox{padding:4px 0 0}
+ol.flow{list-style:none;margin:6px 0 0;padding:0 0 0 4px}
+ol.flow li{position:relative;padding:0 0 16px 44px;min-height:30px}
+ol.flow li::before{content:"";position:absolute;left:13px;top:26px;bottom:-4px;width:2px;background:var(--rule)}
+ol.flow li:last-child::before{display:none}
+.fnum{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;display:flex;
+ align-items:center;justify-content:center;font:600 12.5px/1 var(--fm);background:var(--accent-soft);
+ color:var(--accent);border:1px solid var(--accent)}
+li.person .fnum{background:transparent;color:var(--muted);border-color:var(--muted)}
+li.done .fnum{background:transparent;color:var(--good);border-color:var(--good)}
+.fbody b{display:block;font-size:14.5px;line-height:1.35}
+.fwho{display:inline-block;margin-top:3px;font:400 11.5px/1 var(--fm);text-transform:uppercase;
+ letter-spacing:.07em;color:var(--accent)}
+li.person .fwho{color:var(--muted)}
+.fio{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+.flowlegend{margin:14px 0 0;font-size:12.5px;color:var(--muted)}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+@media print{:root{--bg:#fff;--panel:#fff}nav{display:none}.tw{overflow:visible}table{min-width:0}
+ tr.detail>td{display:table-cell}[hidden]{display:revert!important}}
+</style></head><body>
+<nav><div class="in"><a href="ai_operations.html">Dashboard</a><a href="agents.html" class=on>Agent organization</a><a href="skills.html">Skills</a><a href="workflows.html">Workflows</a><a href="projects.html">Projects</a></div></nav>
+<div class="wrap">
+<div class="top"><h1>Who answers for what</h1><span class="stamp">built 2026-09-24 · <span class="pill warn">never run</span></span></div>
+
+<section><h2>The hierarchy</h2>
+<p class="sub">Read from each role's own note — who it reports to, and which department it answers for.
+There is no diagram to maintain: add a department and an executive, rebuild, and it appears here.</p>
+<div class="chart"><!-- BEGIN the hierarchy — edit this list and the chart redraws itself -->
+<script type="application/json" id="org-data">[
+ {
+  "name": "Chandler",
+  "title": "AI Operations Lead",
+  "department": "AI Operations",
+  "reports_to": "Monica",
+  "authority": "prepare",
+  "kind": "executive"
+ },
+ {
+  "name": "Monica",
+  "title": "Chief of Staff",
+  "department": "Head Office",
+  "reports_to": "you",
+  "authority": "prepare",
+  "kind": "executive"
+ },
+ {
+  "name": "Ross",
+  "title": "Workflow Architect",
+  "department": "",
+  "reports_to": "Monica",
+  "authority": "prepare",
+  "kind": "executive"
+ }
+]</script>
+<!-- END the hierarchy -->
+<div id="org-chart"></div>
+<script>
+(function(){
+  var el=document.getElementById('org-data'); if(!el) return;
+  var data=JSON.parse(el.textContent||el.innerText), ROOT='You';
+  var BW=188,BH=58,HG=22,VG=48;
+  var named={}; data.forEach(function(r){ if(r&&r.name) named[r.name]=r; });
+  var kids={};
+  Object.keys(named).sort().forEach(function(n){
+    var p=(named[n].reports_to||'').toString().trim();
+    var key=(named[p]&&p!==n)?p:ROOT;
+    (kids[key]=kids[key]||[]).push(n);
+  });
+  var pos={},seen={},cursor=0,maxd=0;
+  function place(node,d){
+    if(seen[node]) return null;
+    seen[node]=1; if(d>maxd) maxd=d;
+    var ch=(kids[node]||[]).filter(function(c){return !seen[c];}), x;
+    if(!ch.length){ x=cursor; cursor+=BW+HG; }
+    else{
+      var xs=ch.map(function(c){return place(c,d+1);}).filter(function(v){return v!==null;});
+      if(xs.length){ x=(Math.min.apply(null,xs)+Math.max.apply(null,xs))/2; }
+      else { x=cursor; cursor+=BW+HG; }
+    }
+    pos[node]=[x,d*(BH+VG)];
+    return x;
+  }
+  place(ROOT,0);
+  Object.keys(named).forEach(function(n){
+    if(!(n in pos)){ pos[n]=[cursor,(maxd+1)*(BH+VG)]; cursor+=BW+HG; }
+  });
+  var W=Math.max(cursor-HG,BW), H=(maxd+1)*BH+maxd*VG, out=[];
+  function line(d){ out.push('<path d="'+d+'" stroke="var(--rule)" fill="none" stroke-width="1.5"/>'); }
+  Object.keys(kids).forEach(function(parent){
+    if(!(parent in pos)) return;
+    var drawn=kids[parent].filter(function(c){return c in pos;});
+    if(!drawn.length) return;
+    var px=pos[parent][0], py=pos[parent][1], cy=py+BH, mid=cy+VG/2;
+    line('M'+(px+BW/2)+' '+cy+' V'+mid);
+    var xs=drawn.map(function(c){return pos[c][0]+BW/2;});
+    if(drawn.length>1) line('M'+Math.min.apply(null,xs)+' '+mid+' H'+Math.max.apply(null,xs));
+    drawn.forEach(function(c){ line('M'+(pos[c][0]+BW/2)+' '+mid+' V'+pos[c][1]); });
+  });
+  function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function clip(t,n){ t=String(t||''); return t.length<=n?t:t.slice(0,n).replace(/\s+\S*$/,'')+'…'; }
+  Object.keys(pos).forEach(function(node){
+    var x=pos[node][0], y=pos[node][1];
+    if(node===ROOT){
+      out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--ink)"/>');
+      out.push('<text x="'+(x+BW/2)+'" y="'+(y+BH/2+5)+'" text-anchor="middle" font-size="15" font-weight="600" fill="var(--panel)">You</text>');
+      return;
+    }
+    var r=named[node]||{}, spec=(r.kind==='specialist');
+    var sub=spec?(r.department||'specialist'):(r.department||'across all departments');
+    out.push('<rect x="'+x+'" y="'+y+'" width="'+BW+'" height="'+BH+'" rx="6" fill="var(--panel)" stroke="'+
+             (spec?'var(--rule)':'var(--accent)')+'" stroke-width="'+(spec?1:1.4)+'"'+
+             (spec?' stroke-dasharray="4 3"':'')+'/>');
+    out.push('<text x="'+(x+BW/2)+'" y="'+(y+24)+'" text-anchor="middle" font-size="14.5" font-weight="600" fill="var(--ink)">'+esc(clip(node,22))+'</text>');
+    out.push('<text x="'+(x+BW/2)+'" y="'+(y+42)+'" text-anchor="middle" font-family="var(--fm)" font-size="11" fill="var(--muted)">'+esc(clip(sub,26))+'</text>');
+  });
+  document.getElementById('org-chart').innerHTML =
+    '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-width:'+W+'px;height:auto" '+
+    'font-family="var(--fs)" role="img" aria-label="The executive hierarchy">'+out.join('')+'</svg>';
+})();
+</script></div>
+<p class="legend">3 executives · 2 departments ·
+0 specialists, shown dashed, each reporting to one of them</p></section>
+
+<section><h2>What each of them may do</h2>
+<p class="sub">Everything off these lists is prepared and handed to a person. The line that matters most
+is the last one on each card — where that executive stops.</p>
+<div class="deptblock"><div class="hd"><h3>Head Office</h3><span class="led">Monica</span></div><p class="sub">Somebody can ask what we decided and why, and get an answer in under a minute.</p><div class="grid"><div class="card"><div class="who">prepare · Chief of Staff</div><h3>Monica</h3><p>Reading what you say for intent and putting it where it belongs</p><ul><li>Write or update a decision record at status proposed</li><li>Regenerate the register and the picture</li><li>Run the check and report what it says</li></ul><p style="margin-top:12px"><b>Stops at:</b> Deciding anything</p></div></div></div><div class="deptblock"><div class="hd"><h3>AI Operations</h3><span class="led">Chandler</span></div><p class="sub">The check is green and the page was rebuilt after the last thing that changed.</p><div class="grid"><div class="card"><div class="who">prepare · AI Operations Lead</div><h3>Chandler</h3><p>The machinery — generators, checks, compiled agents and the site</p><ul><li>Rebuild the register, the agents and the site from the notes</li><li>Run the check and report exactly what it said</li><li>Move a fact that is written in two places into one, and link the other to it</li></ul><p style="margin-top:12px"><b>Stops at:</b> What any note should say — that belongs to its department</p></div></div></div><div class="deptblock"><div class="hd"><h3>Across every department</h3><span class="led">not tied to one</span></div><div class="grid"><div class="card"><div class="who">prepare · across all</div><h3>Ross</h3><p>Writing down how work actually happens, one workflow at a time</p></div></div></div></section>
+<footer>Generated from the notes by <code>build_picture.py</code> — a view, never a second source of
+truth. Edit the note that owns the fact and build again. · AI Operations Framework, MeshPro × Expectus</footer>
+</div></body></html>

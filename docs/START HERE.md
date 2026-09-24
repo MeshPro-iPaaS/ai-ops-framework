@@ -44,30 +44,33 @@ Then **connect the folder** you just made to that project. Claude will ask you t
 
 Write this to Claude, in the project, in exactly these words or your own:
 
-> **Set up the AI Operations Framework in my connected folder. Pull it from
-> github.com/MeshPro-iPaaS/ai-ops-framework and run the install, then tell me what it made.**
+> **Set up the AI Operations Framework in my connected folder, from
+> github.com/MeshPro-iPaaS/ai-ops-framework. Then tell me what it made.**
 
-Claude fetches the framework, installs it into your folder and runs the check. It takes about a minute.
-When it finishes you have thirteen folders, a contract, templates, two departments, three roles compiled
-into working agents, ten workflows, three skills, and a five-page site — dashboard, agent organization,
-skills, workflows and projects — in `05 - Operations/picture/`. Open **`ai_operations.html`** first.
+**Claude asks one question first: what to call your three executives** — their job titles, or Norse
+mythology, Friends, the Kardashians, Greek. It changes nothing except what they are called, and a name
+you chose is one you will actually talk to. The job titles stay in the notes either way.
 
-**Claude will ask what to call your executives**: their job titles, or Norse mythology, Friends, the
-Kardashians, Greek, or three names of your own. It changes nothing except what they are called, and a
-name you chose is one you will actually talk to. The job titles stay in the notes either way.
+Then it copies a vault that is already built into your folder. Nothing is installed on your computer
+and nothing is run, so it works the same on a locked-down work laptop as on anybody else's. It takes
+under a minute.
+
+When it finishes you have thirteen folders, a contract, templates, two departments, three executives
+already compiled into working agents, ten workflows, three skills, and a five-page site — dashboard,
+agent organization, skills, workflows and projects — in `05 - Operations/picture/`. Open
+**`ai_operations.html`** first.
+
+Your dashboard will say **the check has never run**. That is true and it is meant to: the check is a
+program, and nothing has run one here. Everything you do today works without it. There is a note at
+the end of this page about turning it on if you ever want to.
 
 The download itself usually ends up inside your folder. That is fine: every generator and every check
-skips it on sight, so it is never read as one of your notes, and you can delete it once the install has
-run. `.ops/framework-source/` is the tidy place for it if you would rather keep it.
-
-> **If Claude says it cannot run programs on your computer** — some setups can only read and write
-> files — say: *then copy everything in the starter folder into mine instead.* You get exactly the same
-> vault. The one difference: the check cannot run, and the dashboard will say so rather than pretend.
-> Everything you actually do today — departments, executives, workflows — works either way.
+skips it on sight, so it is never read as one of your notes, and you can delete it once the copy is
+done.
 
 > **If Claude says it cannot reach the address** — some company networks block it — download the
-> repository as a ZIP in your browser instead, unzip it anywhere, and say: *install the framework from
-> the folder I just unzipped into my vault folder.* Same result.
+> repository as a ZIP in your browser instead, unzip it anywhere, and say: *set up the framework in my
+> vault folder from the folder I just unzipped.* Same result.
 
 ## 4 · Look at what you got
 
@@ -147,3 +150,14 @@ If a session ever answers you with a command to type, that session is wrong. Say
 
 *AI Operations Framework — MeshPro × Expectus. Installed in your vault, owned by you. Nothing here
 phones home, and nothing stops working if we stop talking.*
+
+## Turning the check on — optional, and not today
+
+Your dashboard says the check has never run, because it has not. Everything in this hour works
+without it. What it buys you later is that the site and the compiled agents rebuild themselves
+after every change, and a check refuses the build when the page would say something untrue.
+
+It needs Python. If your machine has none, your vault carries a script that fetches Python's
+official embeddable package — about 10 MB, no installer, no admin rights, nothing added to your
+`PATH` — and uses that. Ask Claude: *turn the machinery on in my vault*. If your company blocks
+the download, nothing breaks; the dashboard keeps saying the check has not run, which is true.

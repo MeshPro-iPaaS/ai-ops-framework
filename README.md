@@ -33,35 +33,35 @@ and a department is where owners come from.
 ## Install
 
 > **If you are an AI session setting this up for somebody: read [`INSTALL.md`](INSTALL.md) first.**
-> There are two paths — running the installer, and copying the pre-built `starter/` vault when this
-> session cannot run programs on the person's computer. Both end in the same vault.
+> It is one path, and it is a copy. Do not start by running a program — two real demos failed there,
+> one on a machine with no Python and one where the session could not run anything at all.
 
+**Make a folder, connect it in Claude, and ask in plain words:**
 
-**If you use Claude with a folder connected** — the way most people will — you do not install anything
-and you do not type any of this. Make a folder, connect it, and ask in plain words:
+> *Set up the AI Operations Framework in this folder, from
+> github.com/MeshPro-iPaaS/ai-ops-framework.*
 
-> *Set up the AI Operations Framework in this folder — pull it from
-> github.com/MeshPro-iPaaS/ai-ops-framework and run the install.*
+Claude asks one question — what to call your three executives — and copies the matching pre-built
+vault out of [`starter/`](starter/) into your folder. Nothing is installed and nothing is run, so it
+works the same on a locked-down work laptop as on a developer's machine.
+[`docs/START HERE.md`](docs/START%20HERE.md) is the walkthrough, written for somebody who has never
+opened a terminal.
 
-Claude does the rest. [`docs/START HERE.md`](docs/START%20HERE.md) is the walkthrough, written for
-somebody who has never opened a terminal.
+Your site lands in `05 - Operations/picture/` — five plain local files. Open `ai_operations.html`
+first. The download itself is skipped by every generator and every check, wherever it ended up, so it
+is never mistaken for one of your notes.
 
-**If you would rather run it yourself**, it needs Python 3.10+ and nothing else:
+**The generators are optional.** Every day-to-day thing — naming departments, adding executives and
+specialists, teaching skills, writing workflows down — is a note, and needs nothing installed. What
+Python buys you is the machinery that keeps the generated surfaces true automatically: the compiled
+agents, the register, the site and the check.
 
-```
-python install.py "C:\path\to\your\vault"
-```
-
-Your site lands in `05 - Operations/picture/` — four plain local files, rebuilt from your notes every
-time anything changes. Open `ai_operations.html` first. The download itself is skipped by every generator and every
-check, wherever it ended up, so it is never mistaken for one of your notes.
-
-Either way it creates the folders, copies the contract, templates, departments, roles, workflows and
-skills in, compiles the roles into agents, builds the register and the page, and runs the check. It is
-idempotent — run it again after any change and it brings everything back in line.
-
-Obsidian is optional but recommended: it is how you read and edit the vault comfortably. The framework
-is plain Markdown either way, and nothing depends on a plugin.
+Every vault ships `\.ops\turn-on-the-machinery.ps1`, which uses a real Python if the machine has one
+and otherwise fetches Python's official embeddable package — about 10 MB, no installer, no admin
+rights, nothing added to `PATH` — and runs the rebuild with that. Where even that is blocked, a
+session keeps the generated surfaces true by hand, and the skill
+`.claude/skills/when-you-cannot-run-programs/` says exactly how; the hierarchy and the step diagrams
+redraw themselves from a block of JSON in the page, so those two are an edit to a list.
 
 ## The idea underneath
 
