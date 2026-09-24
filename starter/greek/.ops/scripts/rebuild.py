@@ -12,6 +12,8 @@ from __future__ import annotations
 import os, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+import framework as F
 STEPS = ["build_roles.py", "build_register.py", "build_picture.py"]
 
 
@@ -30,6 +32,8 @@ def main(root):
     # the page is built before the check runs, so build it once more to carry the result
     subprocess.run([sys.executable, os.path.join(HERE, "build_picture.py"), root],
                    capture_output=True, text=True)
+    print()
+    print(F.say_where(root))
     return chk.returncode
 
 

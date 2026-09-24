@@ -149,6 +149,9 @@ def nav(active):
     return f'<nav><div class="in">{links}</div></nav>'
 
 
+WHERE = ""          # set at build time: the absolute path of this vault's dashboard
+
+
 def shell(title, active, head, body, stamp):
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -158,7 +161,8 @@ def shell(title, active, head, body, stamp):
 <div class="top"><h1>{E(head)}</h1><span class="stamp">{stamp}</span></div>
 {body}
 <footer>Generated from the notes by <code>build_picture.py</code> — a view, never a second source of
-truth. Edit the note that owns the fact and build again. · AI Operations Framework, MeshPro × Expectus</footer>
+truth. Edit the note that owns the fact and build again. · AI Operations Framework, MeshPro × Expectus
+<br><span style="opacity:.8">This page is a file on your own computer: <code>{E(WHERE)}</code></span></footer>
 </div></body></html>"""
 
 
@@ -334,6 +338,8 @@ def flow_block(flows, roles):
 
 # ---------------------------------------------------------------- the build
 def build(root):
+    global WHERE
+    WHERE = F.dashboard_where(root)[0]
     roles = F.notes(root, F.ROLES_DIR)
     depts = sorted(F.notes(root, F.DEPTS_DIR), key=dept_key)
     flows = F.notes(root, F.FLOWS_DIR, skip=("Workflows.md",))
@@ -704,4 +710,4 @@ if __name__ == "__main__":
     print(f"site rebuilt — {len(PAGES)} pages · {w} thing{'' if w==1 else 's'} waiting on a person, "
           f"{d} department{'' if d==1 else 's'}, {ex} executives, {sp} specialist{'' if sp==1 else 's'}, "
           f"{sk} skills, {f} workflows, {p} projects")
-    print(f"   {F.PICTURE.replace(os.sep, '/')}  (inside your folder)")
+    print(F.say_where(root))

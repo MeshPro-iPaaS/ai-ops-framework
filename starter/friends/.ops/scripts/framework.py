@@ -233,3 +233,18 @@ def source_fingerprint(root):
         h.update(read(p).replace("\r\n", "\n").encode("utf-8"))
         h.update(b"\0")
     return h.hexdigest()
+
+
+# ---------------------------------------------------------------- saying where the dashboard is
+# Every generator ends by saying this, and the contract tells every session to say it too. A person
+# who cannot find the page does not have the page.
+def dashboard_where(root):
+    """(absolute path, clickable file:// link) for this vault's dashboard."""
+    full = os.path.abspath(os.path.join(root, PICTURE))
+    url = "file:///" + full.replace("\\", "/").lstrip("/").replace(" ", "%20")
+    return full, url
+
+
+def say_where(root, prefix="Your dashboard"):
+    full, url = dashboard_where(root)
+    return f"{prefix}:\n   {full}\n   {url}"

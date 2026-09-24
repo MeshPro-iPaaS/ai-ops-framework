@@ -97,6 +97,22 @@ A documented organisation is not the same as a working one. Two marks, because t
 In plain language. Say what you want; the roles are routed to by intent, not by a command you have to
 remember. If a session ever answers you with syntax to type, that session is wrong.
 
+## Always say where the dashboard is
+
+Whenever you change anything the site shows — a department, a role, a skill, a workflow, a project, a
+decision — end by giving the person the dashboard's **full path on their computer** and its clickable
+`file:///` link, on their own lines:
+
+```
+Your dashboard:
+   C:\AI\Your Folder\05 - Operations\picture\ai_operations.html
+   file:///C:/AI/Your%20Folder/05%20-%20Operations/picture/ai_operations.html
+```
+
+Every generator prints exactly this; when you have run one, repeat what it printed rather than
+composing your own. A page nobody can find is a page nobody reads, and "it is in your operations
+folder" is not a path.
+
 ## What is never automatic
 
 Publishing anything outward. Sending anything a customer sees. Deploying. Spending money. Changing a

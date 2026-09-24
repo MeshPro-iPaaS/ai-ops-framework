@@ -281,6 +281,8 @@ if __name__ == "__main__":
     print(f"\n{len(p)} checks passed, {len(f)} failed")
     if not f:
         print("Everything the vault says about itself is true.")
+    print()
+    print(F.say_where(root))
     try:
         os.makedirs(os.path.join(root, F.PICTURE_DIR), exist_ok=True)
         io.open(os.path.join(root, F.PICTURE_DIR, "check.json"), "w", encoding="utf-8").write(

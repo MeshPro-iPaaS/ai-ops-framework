@@ -28,7 +28,9 @@ The page everyone reads is generated. Your job is to make it true again, in this
    either.
 4. **Run the check:** `python .ops/scripts/check.py`. It must report **zero failures**.
 5. **If something failed, fix the note** the failure names — never the output, and never the check.
-6. **Report in plain words**: what changed, what the check said, and what is still untrue. If something
+6. **Say where the dashboard is.** The full path on their computer and the `file:///` link, on their
+   own lines. `rebuild.py` and `check.py` both print it — repeat what they printed.
+7. **Report in plain words**: what changed, what the check said, and what is still untrue. If something
    needs a person, name it — what it is, what it waits for, and what happens if nothing is done. A count
    is not a notification.
 

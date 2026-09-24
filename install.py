@@ -272,13 +272,20 @@ def main(vault, names=None):
                   f"from your notes and your checks. Delete it whenever you like.")
         print()
 
-    # Relative, because the install frequently runs inside Claude's own copy of the folder: an
-    # absolute path there names somewhere that does not exist on the laptop, and anyone watching
-    # reads that as a broken install.
+    # Both: the absolute path with a link you can click, and the path inside the folder. The
+    # absolute one is what a person needs to actually find the file; the relative one still matters
+    # when this ran somewhere other than the laptop, because then the absolute one names a place
+    # that is not theirs, and the relative one is the part they can recognise.
     dash = "05 - Operations/picture/ai_operations.html"
+    sys.path.insert(0, ops)
+    try:
+        import framework as _FW
+        where = _FW.say_where(vault, "Your dashboard — open it in a browser")
+    except Exception:
+        where = f"Your dashboard — open it in a browser:\n   {os.path.join(vault, dash)}"
     if out.returncode == 0:
-        print("Your dashboard, inside your folder — open it in a browser:")
-        print(f"   {dash}")
+        print(where)
+        print(f"   inside your folder: {dash}")
         print()
         print("Then open the vault folder in Obsidian, and connect it in Claude.")
         print()
@@ -286,7 +293,7 @@ def main(vault, names=None):
         print("'Setting Up a Department' — it is the workflow the rest of the layer hangs off.")
     else:
         print("The check found something untrue. Fix the note it names, then run this again.")
-        print(f"The dashboard, such as it is: {dash}")
+        print(where)
     print(f"\nAI Operations Framework, base package — MeshPro x Expectus\n")
     return out.returncode
 

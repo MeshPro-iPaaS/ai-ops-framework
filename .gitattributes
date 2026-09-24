@@ -1,5 +1,10 @@
-* text=auto eol=lf
-*.md   text eol=lf
-*.py   text eol=lf
-*.png  binary
-*.pptx binary
+# PowerShell 5.1 reads a .ps1 with no byte-order mark as ANSI. Keep these files checking out with
+# Windows line endings, and keep them ASCII-only at the source, so neither git nor a locale can turn
+# a comment character into a quote and break the parse.
+*.ps1 text eol=crlf
+
+# Everything else is plain text with LF in the repository.
+*.md   text
+*.py   text
+*.html text
+*.json text

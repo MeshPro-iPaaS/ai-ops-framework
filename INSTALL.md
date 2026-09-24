@@ -4,6 +4,12 @@
 
 **Install it by copying a folder. Do not start by running a program.**
 
+**You do not need a shell on that computer, and neither does the person.** Copying is file writes,
+which is a different capability from running programs — a session that can only read and write in the
+connected folder can do this whole install. If you cannot reach the files at all, the person downloads
+the repository as a ZIP in their browser, unzips it anywhere, and says *set up the framework in my
+vault folder from the folder I just unzipped*.
+
 Two real demos have now failed at exactly that: one machine could not run programs at all, and one had
 no Python. Both were normal work laptops. So the finished vault ships in this repository and the
 install is a copy — which every session can do, on every machine, with nothing installed.
